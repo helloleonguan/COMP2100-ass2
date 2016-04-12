@@ -5,9 +5,7 @@ package assignments.comp2100.calculator.ExpressionTree;
  */
 public abstract class Expression {
     protected Expression parent;
-    private int parentPriority;
     private int priority;
-    protected boolean hasExpression = false;
 
     public Expression(int priority) {
         this.priority = priority;

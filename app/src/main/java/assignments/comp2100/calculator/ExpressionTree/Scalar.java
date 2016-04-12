@@ -5,11 +5,11 @@ package assignments.comp2100.calculator.ExpressionTree;
  */
 public class Scalar extends Expression {
     private float value;
+    private static final int SCALAR_PRECEDENCE = LeftBracket.BRACKET_PRECEDENCE + 1;
 
     public Scalar(float value) {
-        super(15);
+        super(SCALAR_PRECEDENCE);
         this.value = value;
-        hasExpression = true;
     }
 
     public float evaluate() {

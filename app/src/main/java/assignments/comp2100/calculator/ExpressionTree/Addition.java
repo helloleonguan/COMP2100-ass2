@@ -8,7 +8,6 @@ public class Addition extends BinaryOperator {
 
     public Addition() {
         super(ADDITION_PRIORITY);
-        hasExpression = true;
     }
 
     public float evaluate() {

@@ -11,15 +11,6 @@ public abstract class BinaryOperator extends Expression {
         super(priority);
     }
 
-    public static BinaryOperator parseStringToOperator(String operator) {
-        if (operator.equals("+")) {
-            return new Addition();
-        } else if (operator.equals("*")) {
-            return new Multiplication();
-        }
-        return null;
-    }
-
     public Expression insertExpression(Expression expr) {
         if (left == null) {
             if (expr.getParent() != null) {

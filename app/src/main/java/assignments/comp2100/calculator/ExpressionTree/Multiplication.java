@@ -8,7 +8,6 @@ public class Multiplication extends BinaryOperator {
 
     public Multiplication() {
         super(MULTIPLICATION_PRIORITY);
-        hasExpression = true;
     }
 
     public float evaluate() {
