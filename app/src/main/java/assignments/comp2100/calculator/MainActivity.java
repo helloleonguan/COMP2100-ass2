@@ -1,6 +1,7 @@
 package assignments.comp2100.calculator;
 
 import android.app.Activity;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
 import android.view.View;
@@ -67,11 +68,20 @@ public class MainActivity extends Activity {
 
 
     public void append(View v) {
+        int max_lines;
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+            max_lines = 4;
+        } else {
+            max_lines = 2;
+        }
+
         int pre_line_count = tvDisplay.getLineCount();
         tvDisplay.setText(tvDisplay.getText().toString() + ((Button) v).getText().toString());
-        if (pre_line_count >= 4 && pre_line_count - tvDisplay.getLineCount() == -1) {
-            tvDisplay.scrollTo(0, tvDisplay.getScrollY() + tvDisplay.getLineHeight());
+        if (pre_line_count >= max_lines) {
+            tvDisplay.scrollTo(0, tvDisplay.getLineHeight() * (tvDisplay.getLineCount() - max_lines));
         }
+
+
     }
 
     public void allClear(View v) {
@@ -95,6 +105,7 @@ public class MainActivity extends Activity {
         } else {
             // TODO display error message
         }
+
     }
 
 }
