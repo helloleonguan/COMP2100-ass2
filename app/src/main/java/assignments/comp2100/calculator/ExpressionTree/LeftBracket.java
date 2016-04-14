@@ -6,11 +6,7 @@ package assignments.comp2100.calculator.ExpressionTree;
  * Class for '(' token
  */
 public class LeftBracket extends UnaryOperator {
-    public static final int BRACKET_PRECEDENCE = 10;
-
-    public LeftBracket() {
-        super(BRACKET_PRECEDENCE);
-    }
+    public static final int BRACKET_PRECEDENCE = 0;
 
     @Override
     public float evaluate() {
@@ -23,9 +19,5 @@ public class LeftBracket extends UnaryOperator {
     }
 
     @Override
-    public ExpressionTree getContext(int precedence) {
-        return operand != null
-                ? operand
-                : this;
-    }
+    public int getPrecedence() { return BRACKET_PRECEDENCE; }
 }

@@ -8,11 +8,10 @@ package assignments.comp2100.calculator.ExpressionTree;
 public class Multiplication extends BinaryOperator {
     static final int MULTIPLICATION_PRECEDENCE = 2;
 
-    public Multiplication() {
-        super(MULTIPLICATION_PRECEDENCE);
-    }
-
     public float evaluate() {
         return left.evaluate() * right.evaluate();
     }
+
+    @Override
+    public int getPrecedence() { return MULTIPLICATION_PRECEDENCE; }
 }

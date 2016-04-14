@@ -6,11 +6,10 @@ package assignments.comp2100.calculator.ExpressionTree;
  * Class for '-' token
  */
 public class Subtraction extends BinaryOperator {
-    public Subtraction() {
-        super(Addition.ADDITION_PRECEDENCE);
-    }
-
     public float evaluate() {
         return left.evaluate() - right.evaluate();
     }
+
+    @Override
+    public int getPrecedence() { return Addition.ADDITION_PRECEDENCE; }
 }

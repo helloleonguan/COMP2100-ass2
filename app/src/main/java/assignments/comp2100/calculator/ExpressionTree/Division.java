@@ -6,11 +6,10 @@ package assignments.comp2100.calculator.ExpressionTree;
  * Class for '/' token
  */
 public class Division extends BinaryOperator {
-    public Division() {
-        super(Multiplication.MULTIPLICATION_PRECEDENCE);
-    }
-
     public float evaluate() {
         return left.evaluate() / right.evaluate();
     }
+
+    @Override
+    public int getPrecedence() { return Multiplication.MULTIPLICATION_PRECEDENCE; }
 }

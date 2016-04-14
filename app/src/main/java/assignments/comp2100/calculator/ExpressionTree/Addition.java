@@ -8,12 +8,11 @@ package assignments.comp2100.calculator.ExpressionTree;
 public class Addition extends BinaryOperator {
     static final int ADDITION_PRECEDENCE = 1;
 
-    public Addition() {
-        super(ADDITION_PRECEDENCE);
-    }
-
     public float evaluate() {
         return left.evaluate() + right.evaluate();
     }
+
+    @Override
+    public int getPrecedence() { return ADDITION_PRECEDENCE; }
 }
 

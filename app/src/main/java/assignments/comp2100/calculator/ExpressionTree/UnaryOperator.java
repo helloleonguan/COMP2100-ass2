@@ -8,15 +8,21 @@ package assignments.comp2100.calculator.ExpressionTree;
 public abstract class UnaryOperator extends ExpressionTree {
     protected ExpressionTree operand;
 
-    public UnaryOperator(int priority) {
-        super(priority);
-    }
-
     public ExpressionTree insertExpression(ExpressionTree expr) {
         if (operand != null) {
-            operand.setParent(null);
-            expr.insertExpression(operand);
+            if (getParent() != null) {
+                getParent().appendExpression(expr);
+            }
+            return expr.insertExpression(this);
+        } else {
+            operand = expr;
+            expr.setParent(this);
+            return expr;
         }
+    }
+
+    @Override
+    ExpressionTree appendExpression(ExpressionTree expr) {
         operand = expr;
         expr.setParent(this);
         return expr;

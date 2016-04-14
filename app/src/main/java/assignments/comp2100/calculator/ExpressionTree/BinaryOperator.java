@@ -11,10 +11,6 @@ public abstract class BinaryOperator extends ExpressionTree {
     protected ExpressionTree left;
     protected ExpressionTree right;
 
-    BinaryOperator(int priority) {
-        super(priority);
-    }
-
     /**
      * Given a new expression, this method inserts it
      * into either this binary operators left or right
@@ -24,21 +20,31 @@ public abstract class BinaryOperator extends ExpressionTree {
      */
     ExpressionTree insertExpression(ExpressionTree expr) {
         if (left == null) { //We assume left to right parsing
-            if (expr.getParent() != null) {
-                expr.getParent().getContext(getPrecedence()).addNode(this);
-            } else {
-                left = expr;
-                expr.setParent(this);
-            }
-            return this;
-        } else {
-            if (right != null) {
-                right.setParent(null);
-                expr.insertExpression(right);
-            }
+            left = expr;
+            expr.setParent(this);
+        } else if (right == null) {
             right = expr;
             expr.setParent(this);
-            return right.getActiveNode();
+        } else {
+            if (expr.getPrecedence() <= getPrecedence()) {
+                if (parent != null) {
+                    getParent().insertExpression(expr);
+                } else {
+                    expr.insertExpression(this);
+                }
+            } else {
+                expr.insertExpression(right);
+                right = expr;
+                expr.setParent(this);
+            }
         }
+        return expr.getActiveNode();
+    }
+
+    @Override
+    ExpressionTree appendExpression(ExpressionTree expr) {
+        right = expr;
+        expr.setParent(this);
+        return this;
     }
 }

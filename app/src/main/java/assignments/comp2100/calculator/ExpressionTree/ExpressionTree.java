@@ -11,7 +11,6 @@ import java.util.HashMap;
  */
 public abstract class ExpressionTree {
     protected ExpressionTree parent;
-    private int precedence;
     private static HashMap<String, Class<?>> tokenParser = new HashMap<>();
     static {
         tokenParser.put("+", Addition.class);
@@ -20,10 +19,6 @@ public abstract class ExpressionTree {
         tokenParser.put("/", Division.class);
         tokenParser.put("(", LeftBracket.class);
         tokenParser.put(")", RightBracket.class);
-    }
-
-    public ExpressionTree(int precedence) {
-        this.precedence = precedence;
     }
 
     /**
@@ -35,7 +30,7 @@ public abstract class ExpressionTree {
         String[] input = expr.split(" ");
         ExpressionTree currentTree = ExpressionTree.parseStringToToken(input[0]);
         for (int i=1; i<input.length; i++) {
-            currentTree = currentTree.addNode(ExpressionTree.parseStringToToken(input[i]));
+            currentTree = currentTree.insertExpression(ExpressionTree.parseStringToToken(input[i]));
         }
         return currentTree.getRoot();
     }
@@ -50,21 +45,6 @@ public abstract class ExpressionTree {
             return (ExpressionTree) tokenParser.get(token).newInstance();
         } catch (Exception e) {
             return new Scalar(Float.valueOf(token));
-        }
-    }
-
-    /**
-     * Increases the size of the tree by one,
-     * by either inserting expr into this tree
-     * or inserting this tree into expr
-     * @param expr new ExpressionTree node
-     * @return an ExpressionTree containing both this and expr
-     */
-    ExpressionTree addNode(ExpressionTree expr) {
-        if (expr.getPrecedence() <= precedence) {
-            return expr.insertExpression(this);
-        } else {
-            return insertExpression(expr);
         }
     }
 
@@ -84,13 +64,11 @@ public abstract class ExpressionTree {
      * the node which new expressions should be
      * inserted into
      */
-    ExpressionTree getActiveNode() {
-        return this;
-    }
+    ExpressionTree getActiveNode() { return this; }
 
     /**
      * @return the LeftBracket node which
-     * contains this node, or else root
+     * contains this node, or else the root
      * if there is no such bracket
      */
     ExpressionTree getScope() {
@@ -101,27 +79,27 @@ public abstract class ExpressionTree {
         }
     }
 
-    ExpressionTree getContext(int precedence) {
-        if (parent != null) {
-            return this.precedence <= precedence
-                    ? this
-                    : parent.getContext(precedence);
-        } else {
-            return this;
-        }
-    }
-
     /**
-     * Places expr as one of this nodes children,
-     * and adjusts the tree appropriately to maintain
-     * proper ordering of expressions.
+     * Inserts the provided ExpressionTree node into
+     * this tree, either as a child or parent node
+     * depending on the amount of children this
+     * node has and the relative precedences of
+     * the expressions.
      * @return the current active node
      */
     abstract ExpressionTree insertExpression(ExpressionTree expr);
 
-    public abstract float evaluate();
+    /**
+     * Places the provided ExpressionTree node
+     * as this nodes child, ignoring precedences
+     * and this nodes number of children
+     * @return the current active node
+     */
+    abstract ExpressionTree appendExpression(ExpressionTree expr);
 
-    public int getPrecedence() { return precedence; }
+    public abstract float evaluate();
+    public abstract int getPrecedence();
+
     public void setParent(ExpressionTree node) { parent = node; }
     public ExpressionTree getParent() { return parent; }
 }

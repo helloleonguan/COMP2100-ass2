@@ -6,10 +6,6 @@ package assignments.comp2100.calculator.ExpressionTree;
  * Class for ')' token
  */
 public class RightBracket extends UnaryOperator {
-    public RightBracket() {
-        super(LeftBracket.BRACKET_PRECEDENCE);
-    }
-
     @Override
     public ExpressionTree insertExpression(ExpressionTree expr) {
         super.insertExpression(expr);
@@ -25,4 +21,7 @@ public class RightBracket extends UnaryOperator {
     public ExpressionTree getActiveNode() {
         return getRoot();
     }
+
+    @Override
+    public int getPrecedence() { return LeftBracket.BRACKET_PRECEDENCE; }
 }
