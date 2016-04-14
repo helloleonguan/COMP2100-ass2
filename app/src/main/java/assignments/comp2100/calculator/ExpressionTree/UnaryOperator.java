@@ -2,20 +2,17 @@ package assignments.comp2100.calculator.ExpressionTree;
 
 /**
  * Created by Nathan F. Elazar on 3/04/2016.
+ *
+ * Abstract class for all operators which have 1 argument.
  */
-public abstract class UnaryOperator extends Expression {
-    protected Expression operand;
+public abstract class UnaryOperator extends ExpressionTree {
+    protected ExpressionTree operand;
 
     public UnaryOperator(int priority) {
         super(priority);
     }
 
-    public Expression insertExpression(Expression expr) {
-        if (expr.getParent() != null) {
-            expr.getParent().insertExpression(this);
-            expr.setParent(this);
-            operand = expr;
-        }
+    public ExpressionTree insertExpression(ExpressionTree expr) {
         if (operand != null) {
             operand.setParent(null);
             expr.insertExpression(operand);

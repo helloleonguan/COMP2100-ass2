@@ -2,12 +2,14 @@ package assignments.comp2100.calculator.ExpressionTree;
 
 /**
  * Created by Nathan F. Elazar on 31/03/2016.
+ *
+ * Class for '+' token
  */
 public class Addition extends BinaryOperator {
-    private static final int ADDITION_PRIORITY = 1;
+    static final int ADDITION_PRECEDENCE = 1;
 
     public Addition() {
-        super(ADDITION_PRIORITY);
+        super(ADDITION_PRECEDENCE);
     }
 
     public float evaluate() {

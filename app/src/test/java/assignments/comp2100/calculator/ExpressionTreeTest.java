@@ -2,7 +2,7 @@ package assignments.comp2100.calculator;
 
 import org.junit.Test;
 
-import assignments.comp2100.calculator.ExpressionTree.Expression;
+import assignments.comp2100.calculator.ExpressionTree.ExpressionTree;
 
 import static org.junit.Assert.*;
 
@@ -13,19 +13,23 @@ public class ExpressionTreeTest {
             "4 + 3 * 5",
             "4 * 3 + 5",
             "4 + 3 * 5 + 2",
-            "4 * 3 + 5 * 2"
+            "4 * 3 + 5 * 2",
+            "3 - 2 - 4 / 2 * 5 + 6 * 8",
+            "4 / 8 * 2 / 4 - 6"
     };
     private static final float[] ansAM = {
             19,
             17,
             21,
-            22
+            22,
+            39,
+            -5.75f
     };
 
     @Test
     public void additionMultiplicationTest() throws Exception {
         for (int i=0; i<testsAM.length; i++) {
-            assertEquals(ansAM[i], Expression.parseStringToTree(testsAM[i]).evaluate(), DELTA);
+            assertEquals(ansAM[i], ExpressionTree.parseStringToTree(testsAM[i]).evaluate(), DELTA);
         }
     }
 
@@ -33,19 +37,21 @@ public class ExpressionTreeTest {
             "( 4 + 3 ) * 5",
             "4 * ( 3 + 5 )",
             "( 4 + 3 ) * ( 5 + 2 )",
-            "4 * ( 3 + 5 ) * 2"
+            "4 * ( 3 + 5 ) * 2",
+            "4 / ( 2 + 4 ) * 3"
     };
     private static final float[] ansB = {
             35,
             32,
             49,
-            64
+            64,
+            2
     };
 
     @Test
     public void bracketTest() throws Exception {
         for (int i=0; i<testsB.length; i++) {
-            assertEquals(ansB[i], Expression.parseStringToTree(testsB[i]).evaluate(), DELTA);
+            assertEquals(ansB[i], ExpressionTree.parseStringToTree(testsB[i]).evaluate(), DELTA);
         }
     }
 }
