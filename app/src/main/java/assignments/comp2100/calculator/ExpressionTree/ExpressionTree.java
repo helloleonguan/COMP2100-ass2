@@ -1,5 +1,6 @@
 package assignments.comp2100.calculator.ExpressionTree;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -19,6 +20,43 @@ public abstract class ExpressionTree {
         tokenParser.put("/", Division.class);
         tokenParser.put("(", LeftBracket.class);
         tokenParser.put(")", RightBracket.class);
+    }
+
+    public static boolean checkInput(String input) throws IllegalArgumentException {
+        String[] splitInput = input.split(" ");
+        boolean scalarIsNeeded = true;
+        int bracketsNeeded = 0;
+        for (int i=0; i<splitInput.length; i++) {
+            if (!tokenParser.containsKey(splitInput[i])) {
+                if (!scalarIsNeeded) {
+                    return false;
+                }
+                scalarIsNeeded = false;
+            } else if (tokenParser.get(splitInput[i]).equals(LeftBracket.class)) {
+                if (!scalarIsNeeded) {
+                    return false;
+                }
+                bracketsNeeded++;
+                scalarIsNeeded = true;
+            } else if (tokenParser.get(splitInput[i]).equals(RightBracket.class)) {
+                if (scalarIsNeeded) {
+                    return false;
+                }
+                bracketsNeeded--;
+            } else {
+                try {
+                    if (tokenParser.get(splitInput[i]).newInstance() instanceof BinaryOperator) {
+                        if (scalarIsNeeded) {
+                            return false;
+                        }
+                        scalarIsNeeded = true;
+                    }
+                } catch (Exception e) {
+                    throw new IllegalArgumentException();
+                }
+            }
+        }
+        return bracketsNeeded == 0 && !scalarIsNeeded;
     }
 
     /**

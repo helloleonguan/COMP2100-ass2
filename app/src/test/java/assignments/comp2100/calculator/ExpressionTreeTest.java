@@ -54,4 +54,29 @@ public class ExpressionTreeTest {
             assertEquals(ansB[i], ExpressionTree.parseStringToTree(testsB[i]).evaluate(), DELTA);
         }
     }
+
+    private static final String[] testsIC = {
+            "+ +",
+            "1 1",
+            "( )",
+            "1 + ( 2 + 2 ) )",
+            "1 + 2",
+            "1 * ( 2 * 3 )"
+    };
+
+    private static final boolean[] ansIC = {
+            false,
+            false,
+            false,
+            false,
+            true,
+            true
+    };
+
+    @Test
+    public void cleanInputTest() throws Exception {
+        for (int i=0; i<testsIC.length; i++) {
+            assertEquals("testIC " + i + " failed", ansIC[i], ExpressionTree.checkInput(testsIC[i]));
+        }
+    }
 }
