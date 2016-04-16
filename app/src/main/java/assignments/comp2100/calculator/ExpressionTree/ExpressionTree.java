@@ -82,7 +82,7 @@ public abstract class ExpressionTree {
         try {
             return (ExpressionTree) tokenParser.get(token).newInstance();
         } catch (Exception e) {
-            return new Scalar(Float.valueOf(token));
+            return new Scalar(Float.parseFloat(token));
         }
     }
 

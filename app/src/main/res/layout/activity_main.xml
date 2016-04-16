@@ -51,7 +51,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:textSize="40sp"
-            android:text="("
+            android:text="( "
             android:onClick="append" />
 
         <Button
@@ -61,7 +61,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:textSize="40sp"
-            android:text=")"
+            android:text=" )"
             android:onClick="append"/>
 
         <Button
@@ -71,7 +71,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:textSize="40sp"
-            android:text="*"
+            android:text=" * "
             android:onClick="append"/>
 
     </LinearLayout>
@@ -120,7 +120,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:textSize="40sp"
-            android:text="/"
+            android:text=" / "
             android:onClick="append"/>
 
     </LinearLayout>
@@ -169,7 +169,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:textSize="40sp"
-            android:text="+"
+            android:text=" + "
             android:onClick="append"/>
 
     </LinearLayout>
@@ -218,7 +218,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:textSize="40sp"
-            android:text="-"
+            android:text=" - "
             android:onClick="append"/>
 
     </LinearLayout>

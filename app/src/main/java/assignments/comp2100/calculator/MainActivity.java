@@ -9,6 +9,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import assignments.comp2100.calculator.ExpressionTree.ExpressionTree;
+
 //        Author: Liyang(Leon) Guan
 //        Uni ID: u5684206
 //        Declaration: The following code is written all by myself.
@@ -135,10 +137,15 @@ public class MainActivity extends Activity {
         String expression = tvDisplay.getText().toString();
 
         // TODO check whether the expression is legit
-        if (true) {
+        if (ExpressionTree.checkInput(expression)) {
             // TODO pass the expression to the parse algorithm and get the result
             tvDisplay.scrollTo(0,0);
-            new CountDownTimer(5000, 500) {
+            try {
+                tvDisplay.setText(String.valueOf(ExpressionTree.parseStringToTree(expression).evaluate()));
+            } catch (NumberFormatException e) {
+                // TODO display invalid number error message
+            }
+            /*new CountDownTimer(5000, 500) {
                 @Override
                 public void onTick(long millisUntilFinished) {
                     tvDisplay.setText("Not Available now! \n Disappear in " + millisUntilFinished / 1000 + "s.");
@@ -148,7 +155,7 @@ public class MainActivity extends Activity {
                 public void onFinish() {
                     allClear(tvDisplay);
                 }
-            }.start();
+            }.start();*/
 
         } else {
             // TODO display error message
