@@ -7,7 +7,7 @@ package assignments.comp2100.calculator.ExpressionTree;
  */
 public class Scalar extends ExpressionTree {
     private float value;
-    private static final int SCALAR_PRECEDENCE = LeftBracket.BRACKET_PRECEDENCE - 1;
+    static final int SCALAR_PRECEDENCE = LeftBracket.BRACKET_PRECEDENCE + 1;
 
     public Scalar(float value) { this.value = value; }
 
@@ -16,21 +16,12 @@ public class Scalar extends ExpressionTree {
     }
 
     @Override
-    public ExpressionTree getActiveNode() {
-        return parent;
-    }
-
-    @Override
     public ExpressionTree insertExpression(ExpressionTree expr) {
         if (parent != null) {
-            parent.appendExpression(expr);
+            return parent.insertExpression(expr);
+        } else {
+            return expr.insertExpression(this);
         }
-        return expr.insertExpression(this);
-    }
-
-    @Override
-    public ExpressionTree appendExpression(ExpressionTree expr) {
-        throw new RuntimeException();
     }
 
     @Override

@@ -8,14 +8,28 @@ package assignments.comp2100.calculator.ExpressionTree;
 public class LeftBracket extends UnaryOperator {
     public static final int BRACKET_PRECEDENCE = 0;
 
+    private boolean isClosed = false;
+
     @Override
-    public float evaluate() {
-        return operand.evaluate();
+    ExpressionTree insertExpression(ExpressionTree expr) {
+        if (expr instanceof RightBracket) {
+            isClosed = true;
+            return this;
+        }
+        if (isClosed) {
+            if (parent != null) {
+                return parent.insertExpression(expr);
+            } else {
+                return expr.insertExpression(this);
+            }
+        } else {
+            return super.insertExpression(expr);
+        }
     }
 
     @Override
-    public ExpressionTree getScope() {
-        return this;
+    public float evaluate() {
+        return operand.evaluate();
     }
 
     @Override

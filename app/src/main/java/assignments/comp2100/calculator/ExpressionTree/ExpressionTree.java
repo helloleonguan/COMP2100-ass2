@@ -20,6 +20,8 @@ public abstract class ExpressionTree {
         tokenParser.put("/", Division.class);
         tokenParser.put("(", LeftBracket.class);
         tokenParser.put(")", RightBracket.class);
+        tokenParser.put("exp", Exponential.class);
+        tokenParser.put("log", Logarithm.class);
     }
 
     public static boolean checkInput(String input) throws IllegalArgumentException {
@@ -98,26 +100,6 @@ public abstract class ExpressionTree {
     }
 
     /**
-     * @return the current active node, which is
-     * the node which new expressions should be
-     * inserted into
-     */
-    ExpressionTree getActiveNode() { return this; }
-
-    /**
-     * @return the LeftBracket node which
-     * contains this node, or else the root
-     * if there is no such bracket
-     */
-    ExpressionTree getScope() {
-        if (parent == null) {
-            return this;
-        } else {
-            return parent.getScope();
-        }
-    }
-
-    /**
      * Inserts the provided ExpressionTree node into
      * this tree, either as a child or parent node
      * depending on the amount of children this
@@ -126,18 +108,9 @@ public abstract class ExpressionTree {
      * @return the current active node
      */
     abstract ExpressionTree insertExpression(ExpressionTree expr);
-
-    /**
-     * Places the provided ExpressionTree node
-     * as this nodes child, ignoring precedences
-     * and this nodes number of children
-     * @return the current active node
-     */
-    abstract ExpressionTree appendExpression(ExpressionTree expr);
-
     public abstract float evaluate();
-    public abstract int getPrecedence();
+    abstract int getPrecedence();
 
-    public void setParent(ExpressionTree node) { parent = node; }
-    public ExpressionTree getParent() { return parent; }
+    void setParent(ExpressionTree node) { parent = node; }
+    ExpressionTree getParent() { return parent; }
 }

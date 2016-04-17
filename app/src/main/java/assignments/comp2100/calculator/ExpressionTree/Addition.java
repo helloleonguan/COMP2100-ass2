@@ -6,7 +6,7 @@ package assignments.comp2100.calculator.ExpressionTree;
  * Class for '+' token
  */
 public class Addition extends BinaryOperator {
-    static final int ADDITION_PRECEDENCE = 1;
+    static final int ADDITION_PRECEDENCE = Scalar.SCALAR_PRECEDENCE + 1;
 
     public float evaluate() {
         return left.evaluate() + right.evaluate();

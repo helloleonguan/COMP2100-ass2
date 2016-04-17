@@ -22,29 +22,24 @@ public abstract class BinaryOperator extends ExpressionTree {
         if (left == null) { //We assume left to right parsing
             left = expr;
             expr.setParent(this);
+            return this;
         } else if (right == null) {
             right = expr;
             expr.setParent(this);
+            return right;
         } else {
             if (expr.getPrecedence() <= getPrecedence()) {
                 if (parent != null) {
-                    getParent().insertExpression(expr);
+                    return getParent().insertExpression(expr);
                 } else {
-                    expr.insertExpression(this);
+                    return expr.insertExpression(this);
                 }
             } else {
                 expr.insertExpression(right);
                 right = expr;
                 expr.setParent(this);
+                return right;
             }
         }
-        return expr.getActiveNode();
-    }
-
-    @Override
-    ExpressionTree appendExpression(ExpressionTree expr) {
-        right = expr;
-        expr.setParent(this);
-        return this;
     }
 }

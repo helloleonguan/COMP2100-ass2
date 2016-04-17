@@ -6,7 +6,7 @@ package assignments.comp2100.calculator.ExpressionTree;
  * Class for '*' token
  */
 public class Multiplication extends BinaryOperator {
-    static final int MULTIPLICATION_PRECEDENCE = 2;
+    static final int MULTIPLICATION_PRECEDENCE = Addition.ADDITION_PRECEDENCE + 1;
 
     public float evaluate() {
         return left.evaluate() * right.evaluate();
