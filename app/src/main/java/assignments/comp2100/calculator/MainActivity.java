@@ -9,6 +9,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+
 import assignments.comp2100.calculator.ExpressionTree.ExpressionTree;
 
 //        Author: Liyang(Leon) Guan
@@ -20,27 +22,11 @@ public class MainActivity extends Activity {
     // View declarations
     TextView tvDisplay;
 
-    Button btAC;
-    Button btLeftBracket;
-    Button btRightBracket;
-    Button btMultiplication;
-    Button btSeven;
-    Button btEight;
-    Button btNine;
-    Button btDivision;
-    Button btFour;
-    Button btFive;
-    Button btSix;
-    Button btAddition;
-    Button btOne;
-    Button btTwo;
-    Button btThree;
-    Button btSubtraction;
-    Button btUndo;
-    Button btZero;
-    Button btDot;
-    Button btEqual;
+    Button bMinus;
 
+    //Variables
+    int rstFlag = 0;
+    ArrayList<String> numInputs = new ArrayList<>();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -52,27 +38,27 @@ public class MainActivity extends Activity {
         tvDisplay.setMovementMethod(new ScrollingMovementMethod());
         tvDisplay.setText("");
 
-        // linking all buttons
-        btAC = (Button) findViewById(R.id.actAllClear);
-        btLeftBracket = (Button) findViewById(R.id.inLeftBracket);
-        btRightBracket = (Button) findViewById(R.id.inRightBracket);
-        btMultiplication = (Button) findViewById(R.id.inMultiplication);
-        btSeven = (Button) findViewById(R.id.inSeven);
-        btEight = (Button) findViewById(R.id.inEight);
-        btNine = (Button) findViewById(R.id.inNine);
-        btDivision = (Button) findViewById(R.id.inDivision);
-        btFour = (Button) findViewById(R.id.inFour);
-        btFive = (Button) findViewById(R.id.inFive);
-        btSix = (Button) findViewById(R.id.inSix);
-        btAddition = (Button) findViewById(R.id.inAddition);
-        btOne = (Button) findViewById(R.id.inOne);
-        btTwo = (Button) findViewById(R.id.inTwo);
-        btThree = (Button) findViewById(R.id.inThree);
-        btSubtraction = (Button) findViewById(R.id.inSubtraction);
-        btUndo = (Button) findViewById(R.id.actUndo);
-        btZero = (Button) findViewById(R.id.inZero);
-        btDot = (Button) findViewById(R.id.inDot);
-        btEqual = (Button) findViewById(R.id.actEqual);
+        numInputs.add("0");
+        numInputs.add("1");
+        numInputs.add("2");
+        numInputs.add("3");
+        numInputs.add("4");
+        numInputs.add("5");
+        numInputs.add("6");
+        numInputs.add("7");
+        numInputs.add("8");
+        numInputs.add("9");
+        numInputs.add(".");
+
+        // input negative sign
+        bMinus = (Button) findViewById(R.id.inSubtraction);
+        bMinus.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                tvDisplay.setText(tvDisplay.getText().toString() + "-");
+                return true;
+            }
+        });
 
     }
 
@@ -88,10 +74,13 @@ public class MainActivity extends Activity {
             max_lines = 2;
         }
 
-        int pre_line_count = tvDisplay.getLineCount();
-        tvDisplay.setText(tvDisplay.getText().toString() + ((Button) v).getText().toString());
-        if (pre_line_count >= max_lines) {
-            tvDisplay.scrollTo(0, tvDisplay.getLineHeight() * (tvDisplay.getLineCount() - max_lines));
+        if (!(rstFlag == 1 && numInputs.contains(((Button) v).getText().toString()) )) {
+            int pre_line_count = tvDisplay.getLineCount();
+            tvDisplay.setText(tvDisplay.getText().toString() + ((Button) v).getText().toString());
+            rstFlag = 0;
+            if (pre_line_count >= max_lines) {
+                tvDisplay.scrollTo(0, tvDisplay.getLineHeight() * (tvDisplay.getLineCount() - max_lines));
+            }
         }
     }
 
@@ -101,7 +90,8 @@ public class MainActivity extends Activity {
      */
     public void allClear(View v) {
         tvDisplay.setText("");
-        tvDisplay.scrollTo(0,0);
+        tvDisplay.scrollTo(0, 0);
+        rstFlag = 0;
     }
 
     /**
@@ -125,6 +115,10 @@ public class MainActivity extends Activity {
         } else {
             tvDisplay.scrollTo(0,0);
         }
+
+        if (tvDisplay.getText().toString().equals("")) {
+            rstFlag = 0;
+        }
     }
 
     /**
@@ -136,29 +130,27 @@ public class MainActivity extends Activity {
     public void evaluate(View v) {
         String expression = tvDisplay.getText().toString();
 
-        // TODO check whether the expression is legit
         if (ExpressionTree.checkInput(expression)) {
-            // TODO pass the expression to the parse algorithm and get the result
             tvDisplay.scrollTo(0,0);
             try {
                 tvDisplay.setText(String.valueOf(ExpressionTree.parseStringToTree(expression).evaluate()));
+                rstFlag = 1;
             } catch (NumberFormatException e) {
                 // TODO display invalid number error message
             }
-            /*new CountDownTimer(5000, 500) {
+
+        } else {
+            new CountDownTimer(3000, 500) {
                 @Override
                 public void onTick(long millisUntilFinished) {
-                    tvDisplay.setText("Not Available now! \n Disappear in " + millisUntilFinished / 1000 + "s.");
+                    tvDisplay.setText("Invalid Expression! \n Disappear in " + millisUntilFinished / 1000 + "s.");
                 }
 
                 @Override
                 public void onFinish() {
                     allClear(tvDisplay);
                 }
-            }.start();*/
-
-        } else {
-            // TODO display error message
+            }.start();
         }
 
     }
