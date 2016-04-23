@@ -1,5 +1,6 @@
 package assignments.comp2100.calculator.ExpressionTree;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -11,17 +12,32 @@ import java.util.HashMap;
  * trees from Strings, and evaluating expressions
  */
 public abstract class ExpressionTree {
+    public static class Operation {
+        Method operation;
+        int precedence;
+
+        Operation(Method operation, int precedence) {
+            this.operation = operation;
+            this.precedence = precedence;
+        }
+    }
     protected ExpressionTree parent;
-    private static HashMap<String, Class<?>> tokenParser = new HashMap<>();
+    private static HashMap<String, Operation> tokenParser = new HashMap<>();
     static {
-        tokenParser.put("+", Addition.class);
-        tokenParser.put("-", Subtraction.class);
-        tokenParser.put("*", Multiplication.class);
-        tokenParser.put("/", Division.class);
-        tokenParser.put("(", LeftBracket.class);
-        tokenParser.put(")", RightBracket.class);
-        tokenParser.put("exp", Exponential.class);
-        tokenParser.put("log", Logarithm.class);
+        try {
+            Class[] bArgs = {float.class, float.class};
+            Class[] uArg = {float.class};
+            tokenParser.put("+", new Operation(OperationDatabase.class.getDeclaredMethod("add", bArgs), 1));
+            tokenParser.put("-", new Operation(OperationDatabase.class.getDeclaredMethod("sub", bArgs), 1));
+            tokenParser.put("*", new Operation(OperationDatabase.class.getDeclaredMethod("mult", bArgs), 2));
+            tokenParser.put("/", new Operation(OperationDatabase.class.getDeclaredMethod("div", bArgs), 2));
+            tokenParser.put("(", new Operation(OperationDatabase.class.getDeclaredMethod("identity", uArg), 0));
+            tokenParser.put(")", new Operation(OperationDatabase.class.getDeclaredMethod("identity", uArg), 0));
+            tokenParser.put("exp", new Operation(OperationDatabase.class.getDeclaredMethod("exp", uArg), Integer.MAX_VALUE));
+            tokenParser.put("log", new Operation(OperationDatabase.class.getDeclaredMethod("log", uArg), Integer.MAX_VALUE));
+        } catch (Exception e) {
+            System.err.println("could not initialize");
+        }
     }
 
     public static boolean checkInput(String input) throws IllegalArgumentException {
@@ -34,20 +50,20 @@ public abstract class ExpressionTree {
                     return false;
                 }
                 scalarIsNeeded = false;
-            } else if (tokenParser.get(splitInput[i]).equals(LeftBracket.class)) {
+            } else if (splitInput[i].equals("(")) {
                 if (!scalarIsNeeded) {
                     return false;
                 }
                 bracketsNeeded++;
                 scalarIsNeeded = true;
-            } else if (tokenParser.get(splitInput[i]).equals(RightBracket.class)) {
+            } else if (splitInput[i].equals(")")) {
                 if (scalarIsNeeded) {
                     return false;
                 }
                 bracketsNeeded--;
             } else {
                 try {
-                    if (tokenParser.get(splitInput[i]).newInstance() instanceof BinaryOperator) {
+                    if (tokenParser.get(splitInput[i]).operation.getParameterTypes().length == 2) {
                         if (scalarIsNeeded) {
                             return false;
                         }
@@ -81,9 +97,18 @@ public abstract class ExpressionTree {
      * @return an ExpressionTree with no parents/children
      */
     public static ExpressionTree parseStringToToken(String token) {
-        try {
-            return (ExpressionTree) tokenParser.get(token).newInstance();
-        } catch (Exception e) {
+        if (token.equals("(")) {
+            return new LeftBracket();
+        } else if (token.equals(")")) {
+            return new RightBracket();
+        } else if (tokenParser.containsKey(token)) {
+            Operation op = tokenParser.get(token);
+            if (op.operation.getParameterTypes().length == 2) {
+                return new BinaryOperator(op.operation, op.precedence);
+            } else {
+                return new UnaryOperator(op.operation, op.precedence);
+            }
+        } else {
             return new Scalar(Float.parseFloat(token));
         }
     }

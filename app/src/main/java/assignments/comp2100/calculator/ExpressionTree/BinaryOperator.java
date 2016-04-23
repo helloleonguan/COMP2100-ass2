@@ -1,5 +1,7 @@
 package assignments.comp2100.calculator.ExpressionTree;
 
+import java.lang.reflect.Method;
+
 /**
  * Created by Nathan F. Elazar on 31/03/2016.
  *
@@ -7,9 +9,16 @@ package assignments.comp2100.calculator.ExpressionTree;
  * Contains code for inserting new expressions into a
  * node which has two children.
  */
-public abstract class BinaryOperator extends ExpressionTree {
+public class BinaryOperator extends ExpressionTree {
     protected ExpressionTree left;
     protected ExpressionTree right;
+    protected Method operation;
+    protected int precedence;
+
+    BinaryOperator(Method operation, int precedence) {
+        this.operation = operation;
+        this.precedence = precedence;
+    }
 
     /**
      * Given a new expression, this method inserts it
@@ -41,5 +50,19 @@ public abstract class BinaryOperator extends ExpressionTree {
                 return right;
             }
         }
+    }
+
+    @Override
+    public float evaluate() {
+        try {
+            return (float) operation.invoke(null, new Object[] {left.evaluate(), right.evaluate()});
+        } catch (Exception e) {
+            return 0;
+        }
+    }
+
+    @Override
+    int getPrecedence() {
+        return precedence;
     }
 }
