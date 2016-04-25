@@ -21,7 +21,9 @@ public abstract class ExpressionTree {
             this.precedence = precedence;
         }
     }
+
     protected ExpressionTree parent;
+    protected int precedence;
     private static HashMap<String, Operation> tokenParser = new HashMap<>();
     static {
         try {
@@ -45,7 +47,7 @@ public abstract class ExpressionTree {
             tokenParser.put("exp", new Operation(OperationDatabase.class.getDeclaredMethod("exp", uArg), Integer.MAX_VALUE));
             tokenParser.put("log", new Operation(OperationDatabase.class.getDeclaredMethod("log", uArg), Integer.MAX_VALUE));
         } catch (Exception e) {
-            System.err.println("could not initialize");
+            System.err.println("Could not initialize tokenParser");
         }
     }
 

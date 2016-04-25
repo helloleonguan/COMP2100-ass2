@@ -358,7 +358,7 @@
             android:textAllCaps="false"
             android:text="f(x)"
             android:textColor="#EEEEEE"
-            android:onClick=""/>
+            android:onClick="drawFunction"/>
 
         <Button
             android:id="@+id/inSubtraction"

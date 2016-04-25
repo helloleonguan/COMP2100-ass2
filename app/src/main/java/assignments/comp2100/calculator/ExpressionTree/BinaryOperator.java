@@ -13,7 +13,6 @@ public class BinaryOperator extends ExpressionTree {
     protected ExpressionTree left;
     protected ExpressionTree right;
     protected Method operation;
-    protected int precedence;
 
     BinaryOperator(Method operation, int precedence) {
         this.operation = operation;
@@ -55,7 +54,7 @@ public class BinaryOperator extends ExpressionTree {
     @Override
     public float evaluate() {
         try {
-            return (float) operation.invoke(null, new Object[] {left.evaluate(), right.evaluate()});
+            return (float) operation.invoke(null, left.evaluate(), right.evaluate());
         } catch (Exception e) {
             return 0;
         }

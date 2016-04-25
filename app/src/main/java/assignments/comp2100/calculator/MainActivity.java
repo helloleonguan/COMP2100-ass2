@@ -2,9 +2,15 @@ package assignments.comp2100.calculator;
 
 import android.app.Activity;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.text.SpannableStringBuilder;
 import android.text.method.ScrollingMovementMethod;
+import android.text.style.ImageSpan;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -25,6 +31,7 @@ public class MainActivity extends Activity {
     Button bMinus;
 
     //Variables
+    boolean funcFlag = false;
     int rstFlag = 0;
     ArrayList<String> numInputs = new ArrayList<>();
 
@@ -67,6 +74,10 @@ public class MainActivity extends Activity {
      * @param v
      */
     public void append(View v) {
+        if (funcFlag) {
+            tvDisplay.setText("");
+            funcFlag = false;
+        }
         int max_lines;
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
             max_lines = 4;
@@ -152,7 +163,25 @@ public class MainActivity extends Activity {
                 }
             }.start();
         }
-
     }
 
+    public void drawFunction(View v) {
+        funcFlag = true;
+        Canvas screen = new Canvas();
+        Paint paint = new Paint();
+        paint.setARGB(100, 100, 200, 100);
+        Bitmap bm = Bitmap.createBitmap(tvDisplay.getWidth(), tvDisplay.getHeight(), Bitmap.Config.RGB_565);
+        for (int i=0; i<tvDisplay.getBackground().getBounds().width(); i++) {
+            float functionHeight = ExpressionTree.parseStringToTree(tvDisplay.getText().toString()).evaluate();
+            if (functionHeight < tvDisplay.getBackground().getBounds().height()) {
+                bm.setPixel(tvDisplay.getBackground().getBounds().left + i, (int) (tvDisplay.getHeight() - functionHeight), 500);
+                bm.setPixel(tvDisplay.getBackground().getBounds().left + i, (int) (tvDisplay.getHeight() - functionHeight) - 1, 500);
+                bm.setPixel(tvDisplay.getBackground().getBounds().left + i, (int) (tvDisplay.getHeight() - functionHeight) + 1, 500);
+            }
+        }
+
+        SpannableStringBuilder builder = new SpannableStringBuilder();
+        builder.append(" ", new ImageSpan(this, bm), 0);
+        tvDisplay.setText(builder);
+    }
 }

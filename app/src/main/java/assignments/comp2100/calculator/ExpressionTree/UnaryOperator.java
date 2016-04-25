@@ -11,7 +11,6 @@ public class UnaryOperator extends ExpressionTree {
     protected static final int UNARY_PRECEDENCE = Integer.MAX_VALUE;
     protected ExpressionTree operand;
     protected Method operation;
-    protected int precedence;
 
     UnaryOperator() {}
 
@@ -45,7 +44,7 @@ public class UnaryOperator extends ExpressionTree {
     @Override
     public float evaluate() {
         try {
-            return (float) operation.invoke(null, new Object[] {operand.evaluate()});
+            return (float) operation.invoke(null, operand.evaluate());
         } catch (Exception e) {
             return 0;
         }
