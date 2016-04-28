@@ -10,6 +10,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Stack;
 
 import assignments.comp2100.calculator.ExpressionTree.ExpressionTree;
 
@@ -27,6 +28,7 @@ public class MainActivity extends Activity {
     //Variables
     int rstFlag = 0;
     ArrayList<String> numInputs = new ArrayList<>();
+    Stack<Integer> inputStack;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -50,12 +52,15 @@ public class MainActivity extends Activity {
         numInputs.add("9");
         numInputs.add(".");
 
+        inputStack = new Stack<>();
+
         // input negative sign
         bMinus = (Button) findViewById(R.id.inSubtraction);
         bMinus.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
                 tvDisplay.setText(tvDisplay.getText().toString() + "-");
+                inputStack.push(1);
                 return true;
             }
         });
@@ -77,6 +82,7 @@ public class MainActivity extends Activity {
         if (!(rstFlag == 1 && numInputs.contains(((Button) v).getText().toString()) )) {
             int pre_line_count = tvDisplay.getLineCount();
             tvDisplay.setText(tvDisplay.getText().toString() + ((Button) v).getText().toString());
+            inputStack.push( ((Button) v).getText().toString().length());
             rstFlag = 0;
             if (pre_line_count >= max_lines) {
                 tvDisplay.scrollTo(0, tvDisplay.getLineHeight() * (tvDisplay.getLineCount() - max_lines));
@@ -101,7 +107,12 @@ public class MainActivity extends Activity {
     public void undo(View v) {
         if (!tvDisplay.getText().toString().equals("")) {
             String tmp = tvDisplay.getText().toString();
-            tvDisplay.setText(tmp.substring(0, tmp.length() - 1));
+            if (rstFlag == 1){
+                tvDisplay.setText("");
+            } else {
+                Integer lastLength = inputStack.pop();
+                tvDisplay.setText(tmp.substring(0, tmp.length() - lastLength));
+            }
         }
 
         int max_lines;
@@ -135,6 +146,7 @@ public class MainActivity extends Activity {
             try {
                 tvDisplay.setText(String.valueOf(ExpressionTree.parseStringToTree(expression).evaluate()));
                 rstFlag = 1;
+                inputStack.empty();
             } catch (NumberFormatException e) {
                 // TODO display invalid number error message
             }
