@@ -1,6 +1,7 @@
 package assignments.comp2100.calculator;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -12,8 +13,12 @@ import android.text.SpannableStringBuilder;
 import android.text.method.ScrollingMovementMethod;
 import android.text.style.ImageSpan;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Stack;
@@ -28,8 +33,15 @@ public class MainActivity extends Activity {
 
     // View declarations
     TextView tvDisplay;
+    EditText etEdit;
+    Button bVerify;
+    LinearLayout llButtonGrid;
 
     Button bMinus;
+
+    //input operations databases
+    ArrayList<String> biSpaceInputs;
+    ArrayList<String> rightSpaceInputs;
 
     //Variables
     boolean funcFlag = false;
@@ -42,6 +54,30 @@ public class MainActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // initialize input databases
+        biSpaceInputs = new ArrayList<>();
+        biSpaceInputs.add("*");
+        biSpaceInputs.add("/");
+        biSpaceInputs.add("+");
+        biSpaceInputs.add("-");
+        biSpaceInputs.add("%");
+
+        rightSpaceInputs = new ArrayList<>();
+        rightSpaceInputs.add("exp");
+        rightSpaceInputs.add("sqrt");
+        rightSpaceInputs.add("abs");
+        rightSpaceInputs.add("sinh");
+        rightSpaceInputs.add("cosh");
+        rightSpaceInputs.add("tanh");
+        rightSpaceInputs.add("sin");
+        rightSpaceInputs.add("cos");
+        rightSpaceInputs.add("tan");
+        rightSpaceInputs.add("log");
+
+        etEdit = (EditText) findViewById(R.id.editArea);
+        bVerify = (Button) findViewById(R.id.verifyBtn);
+        llButtonGrid = (LinearLayout) findViewById(R.id.buttonGrid);
 
         // setup the textView
         tvDisplay = (TextView) findViewById(R.id.displayArea);
@@ -71,6 +107,25 @@ public class MainActivity extends Activity {
                 tvDisplay.setText(tvDisplay.getText().toString() + "-");
                 inputStack.push(1);
                 return true;
+            }
+        });
+
+        tvDisplay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String buffer = tvDisplay.getText().toString();
+                tvDisplay.setVisibility(View.GONE);
+                etEdit.setVisibility(View.VISIBLE);
+                etEdit.setText(buffer);
+                etEdit.setSelection(buffer.length());
+                etEdit.requestFocus();
+
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.showSoftInput(etEdit, InputMethodManager.SHOW_IMPLICIT);
+
+                bVerify.setVisibility(View.VISIBLE);
+                llButtonGrid.setVisibility(View.INVISIBLE);
+
             }
         });
 
@@ -144,6 +199,106 @@ public class MainActivity extends Activity {
         if (tvDisplay.getText().toString().equals("")) {
             rstFlag = 0;
         }
+    }
+
+    public void parse(View v) {
+        String parsedExpression = addSpace(etEdit.getText().toString());
+        if (parsedExpression != null) {
+            etEdit.setVisibility(View.GONE);
+            bVerify.setVisibility(View.GONE);
+            tvDisplay.setVisibility(View.VISIBLE);
+            llButtonGrid.setVisibility(View.VISIBLE);
+            tvDisplay.setText(parsedExpression);
+
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(etEdit.getWindowToken(), 0);
+        }
+    }
+
+    public String addSpace(String s) {
+        int index;
+        String rst = "";
+
+        for (index = 0; index < s.length();){
+
+            if (Character.isLetter(s.charAt(index))){
+                int flag = 0;
+                for (String function : rightSpaceInputs) {
+                    String head = (index + function.length() >= s.length())? s.substring(index) : s.substring(index,index+function.length());
+                    if (head.equals(function)) {
+                        rst += head + " ";
+                        index += head.length();
+                        flag++;
+                        break;
+                    }
+                }
+
+                if (flag == 0){
+                    Toast.makeText(this, "Function name typo!", Toast.LENGTH_LONG).show();
+                    rst = null;
+                    break;
+                }
+
+            } else if (numInputs.contains(Character.toString(s.charAt(index)))){
+                int flag = 0;
+                int length = 0;
+                int point = 0;
+                while (flag == 0) {
+                    if (index + length < s.length() && s.charAt(index+length) == '.'){
+                        point ++;
+                        length ++;
+                    } else if (index + length < s.length() && numInputs.contains(Character.toString(s.charAt(index + length)))) {
+                        length++;
+                    } else {
+                        flag = 1;
+                    }
+                }
+
+                if (point >= 2) {
+                    Toast.makeText(this, "Multiple floating points!", Toast.LENGTH_LONG).show();
+                    rst = null;
+                    break;
+                } else {
+                    rst += s.substring(index,index+length);
+                    index += length;
+                }
+            } else if (biSpaceInputs.contains(Character.toString(s.charAt(index)))) {
+                if (s.charAt(index) == '-') {
+                    int flag = 0;
+                    int leftOffset = 1;
+                    while(flag == 0) {
+                        if (index - leftOffset >=0 && numInputs.contains(Character.toString(s.charAt(index - leftOffset)))) {
+                            rst += " - ";
+                            index++;
+                            flag = 1;
+                        } else if (index - leftOffset >=0 && s.charAt(index-leftOffset) == ' '){
+                            leftOffset ++;
+                        } else {
+                            rst += "-";
+                            index++;
+                            flag = 1;
+                        }
+                    }
+                } else {
+                    rst += " " + Character.toString(s.charAt(index)) + " ";
+                    index++;
+                }
+            } else if (s.charAt(index)=='(') {
+                rst += "( ";
+                index++;
+            } else if (s.charAt(index) == ')') {
+                rst += " )";
+                index++;
+            } else if (s.charAt(index) == ' '){
+                index++;
+            } else {
+                Toast.makeText(this, "Invalid character detected!", Toast.LENGTH_LONG).show();
+                rst = null;
+                break;
+            }
+
+        }
+        return rst;
     }
 
     /**
