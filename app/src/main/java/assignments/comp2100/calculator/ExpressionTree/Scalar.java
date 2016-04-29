@@ -9,7 +9,8 @@ public class Scalar extends ExpressionTree {
     private float value;
     static final int SCALAR_PRECEDENCE = LeftBracket.BRACKET_PRECEDENCE + 1;
 
-    public Scalar(float value) { this.value = value; }
+    Scalar() {}
+    Scalar(float value) { this.value = value; }
 
     public float evaluate() {
         return value;

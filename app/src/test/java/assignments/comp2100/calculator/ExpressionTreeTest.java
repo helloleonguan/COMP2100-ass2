@@ -15,7 +15,8 @@ public class ExpressionTreeTest {
             "4 + 3 * 5 + 2",
             "4 * 3 + 5 * 2",
             "3 - 2 - 4 / 2 * 5 + 6 * 8",
-            "4 / 8 * 2 / 4 - 6"
+            "4 / 8 * 2 / 4 - 6",
+            "6 / 3 / 2"
     };
     private static final float[] ansAM = {
             19,
@@ -23,7 +24,8 @@ public class ExpressionTreeTest {
             21,
             22,
             39,
-            -5.75f
+            -5.75f,
+            1
     };
 
     @Test

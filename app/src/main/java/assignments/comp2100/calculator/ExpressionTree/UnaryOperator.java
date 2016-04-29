@@ -51,6 +51,15 @@ public class UnaryOperator extends ExpressionTree {
     }
 
     @Override
+    public float evaluate(float x) {
+        try {
+            return (float) operation.invoke(null, operand.evaluate(x));
+        } catch (Exception e) {
+            return 0;
+        }
+    }
+
+    @Override
     int getPrecedence() {
         return precedence;
     }

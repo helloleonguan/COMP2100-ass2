@@ -112,6 +112,8 @@ public abstract class ExpressionTree {
             return new LeftBracket();
         } else if (token.equals(")")) {
             return new RightBracket();
+        } else if (token.equals("x")) {
+            return new Variable();
         } else if (tokenParser.containsKey(token)) {
             Operation op = tokenParser.get(token);
             if (op.operation.getParameterTypes().length == 2) {
@@ -145,6 +147,7 @@ public abstract class ExpressionTree {
      */
     abstract ExpressionTree insertExpression(ExpressionTree expr);
     public abstract float evaluate();
+    public float evaluate(float x) { return evaluate(); }
     abstract int getPrecedence();
 
     void setParent(ExpressionTree node) { parent = node; }

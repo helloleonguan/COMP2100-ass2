@@ -33,6 +33,7 @@ public class MainActivity extends Activity {
 
     //Variables
     boolean funcFlag = false;
+    boolean evaluateFlag = false;
     int rstFlag = 0;
     ArrayList<String> numInputs = new ArrayList<>();
     Stack<Integer> inputStack;
@@ -58,6 +59,7 @@ public class MainActivity extends Activity {
         numInputs.add("8");
         numInputs.add("9");
         numInputs.add(".");
+        numInputs.add("x");
 
         inputStack = new Stack<>();
 
@@ -79,10 +81,6 @@ public class MainActivity extends Activity {
      * @param v
      */
     public void append(View v) {
-        if (funcFlag) {
-            tvDisplay.setText("");
-            funcFlag = false;
-        }
         int max_lines;
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
             max_lines = 4;
@@ -99,6 +97,11 @@ public class MainActivity extends Activity {
                 tvDisplay.scrollTo(0, tvDisplay.getLineHeight() * (tvDisplay.getLineCount() - max_lines));
             }
         }
+    }
+
+    public void appendVar(View v) {
+        funcFlag = true;
+        append(v);
     }
 
     /**
@@ -151,11 +154,24 @@ public class MainActivity extends Activity {
      */
     public void evaluate(View v) {
         String expression = tvDisplay.getText().toString();
+        float x = 0;
+
+        if (funcFlag) {
+            if (!evaluateFlag) { // The user entered a function, let them specify the value to evaluate at
+                tvDisplay.setText(expression + "\n");
+                evaluateFlag = true;
+                return;
+            } else {
+                x = ExpressionTree.parseStringToTree(expression.substring(expression.indexOf('\n') + 1)).evaluate();
+                expression = expression.substring(0, expression.indexOf('\n'));
+                tvDisplay.setText(expression);
+            }
+        }
 
         if (ExpressionTree.checkInput(expression)) {
             tvDisplay.scrollTo(0,0);
             try {
-                tvDisplay.setText(String.valueOf(ExpressionTree.parseStringToTree(expression).evaluate()));
+                tvDisplay.setText(String.valueOf(ExpressionTree.parseStringToTree(expression).evaluate(x)));
                 rstFlag = 1;
                 inputStack.empty();
             } catch (NumberFormatException e) {
