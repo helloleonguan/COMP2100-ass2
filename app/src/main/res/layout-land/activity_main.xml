@@ -24,382 +24,417 @@
         android:padding="15dp"
         android:scrollbars="vertical"/>
 
+    <EditText
+        android:id="@+id/editArea"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="2"
+        android:background="#222222"
+        android:textColor="#DDDDDD"
+        android:textSize="30sp"
+        android:gravity="top"
+        android:padding="15dp"
+        android:scrollbars="vertical"
+        android:visibility="gone"/>
+
     <!--********************-->
+    <Button
+        android:id="@+id/verifyBtn"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:visibility="gone"
+        android:background="@drawable/action_button_bg"
+        android:text="PARSE"
+        android:onClick="parse"
+        />
+
+    <!--********************-->
+    <LinearLayout
+        android:id="@+id/buttonGrid"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="5"
+        android:orientation="vertical"
+        android:visibility="visible">
+
     <!--   Button Section   -->
-    <!--Row 1-->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:orientation="horizontal">
-
-        <Button
-            android:id="@+id/actAllClear"
-            android:background="@drawable/action_button_bg"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
+        <!--Row 1-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
             android:layout_weight="1"
-            android:textSize="30sp"
-            android:text="AC"
-            android:textColor="#EEEEEE"
-            android:onClick="allClear"/>
+            android:orientation="horizontal">
 
-        <Button
-            android:id="@+id/inAbsoluteValue"
-            android:background="@drawable/input_button_bg"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
+            <Button
+                android:id="@+id/actAllClear"
+                android:background="@drawable/action_button_bg"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:textSize="30sp"
+                android:text="AC"
+                android:textColor="#EEEEEE"
+                android:onClick="allClear"/>
+
+            <Button
+                android:id="@+id/inAbsoluteValue"
+                android:background="@drawable/input_button_bg"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:textSize="30sp"
+                android:text="abs "
+                android:textAllCaps="false"
+                android:onClick="append" />
+
+            <Button
+                android:id="@+id/inLeftBracket"
+                android:background="@drawable/input_button_bg"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:textSize="30sp"
+                android:text="( "
+                android:onClick="append" />
+
+            <Button
+                android:id="@+id/inRightBracket"
+                android:background="@drawable/input_button_bg"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:textSize="30sp"
+                android:text=" )"
+                android:onClick="append"/>
+
+            <Button
+                android:id="@+id/inMultiplication"
+                android:background="@drawable/input_button_bg"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:textSize="30sp"
+                android:text=" * "
+                android:onClick="append"/>
+
+            <Button
+                android:id="@+id/inSeven"
+                android:background="@drawable/input_button_bg"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:textSize="30sp"
+                android:text="7"
+                android:onClick="append"/>
+
+            <Button
+                android:id="@+id/inEight"
+                android:background="@drawable/input_button_bg"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:textSize="30sp"
+                android:text="8"
+                android:onClick="append"/>
+
+            <Button
+                android:id="@+id/inNine"
+                android:background="@drawable/input_button_bg"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:textSize="30sp"
+                android:text="9"
+                android:onClick="append"/>
+
+        </LinearLayout>
+
+        <!--Row 2-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
             android:layout_weight="1"
-            android:textSize="30sp"
-            android:text="abs "
-            android:textAllCaps="false"
-            android:onClick="append" />
+            android:orientation="horizontal">
 
-        <Button
-            android:id="@+id/inLeftBracket"
-            android:background="@drawable/input_button_bg"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
+            <Button
+                android:id="@+id/inExponent"
+                android:background="@drawable/input_button_bg"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:textSize="30sp"
+                android:text="exp "
+                android:textAllCaps="false"
+                android:onClick="append"/>
+
+            <Button
+                android:id="@+id/inSinh"
+                android:background="@drawable/input_button_bg"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:textSize="30sp"
+                android:text="sinh "
+                android:textAllCaps="false"
+                android:onClick="append"/>
+
+            <Button
+                android:id="@+id/inSin"
+                android:background="@drawable/input_button_bg"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:textSize="30sp"
+                android:text="sin "
+                android:textAllCaps="false"
+                android:onClick="append"/>
+
+            <Button
+                android:id="@+id/inMod"
+                android:background="@drawable/input_button_bg"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:textSize="30sp"
+                android:text=" % "
+                android:textAllCaps="false"
+                android:onClick="append"/>
+
+
+            <Button
+                android:id="@+id/inDivision"
+                android:background="@drawable/input_button_bg"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:textSize="40sp"
+                android:text=" / "
+                android:onClick="append"/>
+
+            <Button
+                android:id="@+id/inFour"
+                android:background="@drawable/input_button_bg"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:textSize="30sp"
+                android:text="4"
+                android:onClick="append"/>
+
+            <Button
+                android:id="@+id/inFive"
+                android:background="@drawable/input_button_bg"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:textSize="30sp"
+                android:text="5"
+                android:onClick="append"/>
+
+            <Button
+                android:id="@+id/inSix"
+                android:background="@drawable/input_button_bg"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:textSize="30sp"
+                android:text="6"
+                android:onClick="append"/>
+
+
+
+        </LinearLayout>
+
+        <!--Row 3-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
             android:layout_weight="1"
-            android:textSize="30sp"
-            android:text="( "
-            android:onClick="append" />
+            android:orientation="horizontal">
 
-        <Button
-            android:id="@+id/inRightBracket"
-            android:background="@drawable/input_button_bg"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
+            <Button
+                android:id="@+id/inSquareRoot"
+                android:background="@drawable/input_button_bg"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:textSize="30sp"
+                android:text="sqrt "
+                android:textAllCaps="false"
+                android:onClick="append"/>
+
+            <Button
+                android:id="@+id/inCosh"
+                android:background="@drawable/input_button_bg"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:textSize="30sp"
+                android:text="cosh "
+                android:textAllCaps="false"
+                android:onClick="append"/>
+
+            <Button
+                android:id="@+id/inCos"
+                android:background="@drawable/input_button_bg"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:textSize="30sp"
+                android:text="cos "
+                android:textAllCaps="false"
+                android:onClick="append"/>
+
+            <Button
+                android:id="@+id/inLog"
+                android:background="@drawable/input_button_bg"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:textSize="30sp"
+                android:text="log "
+                android:textAllCaps="false"
+                android:onClick="append"/>
+
+
+            <Button
+                android:id="@+id/inAddition"
+                android:background="@drawable/input_button_bg"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:textSize="30sp"
+                android:text=" + "
+                android:onClick="append"/>
+
+            <Button
+                android:id="@+id/inOne"
+                android:background="@drawable/input_button_bg"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:textSize="30sp"
+                android:text="1"
+                android:onClick="append"/>
+
+            <Button
+                android:id="@+id/inTwo"
+                android:background="@drawable/input_button_bg"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:textSize="30sp"
+                android:text="2"
+                android:onClick="append"/>
+
+            <Button
+                android:id="@+id/inThree"
+                android:background="@drawable/input_button_bg"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:textSize="30sp"
+                android:text="3"
+                android:onClick="append"/>
+
+        </LinearLayout>
+
+        <!--Row 4-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
             android:layout_weight="1"
-            android:textSize="30sp"
-            android:text=" )"
-            android:onClick="append"/>
+            android:orientation="horizontal">
 
-        <Button
-            android:id="@+id/inMultiplication"
-            android:background="@drawable/input_button_bg"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:textSize="30sp"
-            android:text=" * "
-            android:onClick="append"/>
+            <Button
+                android:id="@+id/actUndo"
+                android:background="@drawable/action_button_bg"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:textSize="30sp"
+                android:text="undo"
+                android:textAllCaps="false"
+                android:textColor="#EEEEEE"
+                android:onClick="undo"/>
 
-        <Button
-            android:id="@+id/inSeven"
-            android:background="@drawable/input_button_bg"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:textSize="30sp"
-            android:text="7"
-            android:onClick="append"/>
+            <Button
+                android:id="@+id/inTanh"
+                android:background="@drawable/input_button_bg"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:textSize="30sp"
+                android:text="tanh "
+                android:textAllCaps="false"
+                android:onClick="append"/>
 
-        <Button
-            android:id="@+id/inEight"
-            android:background="@drawable/input_button_bg"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:textSize="30sp"
-            android:text="8"
-            android:onClick="append"/>
+            <Button
+                android:id="@+id/inTan"
+                android:background="@drawable/input_button_bg"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:textSize="30sp"
+                android:text="tan "
+                android:textAllCaps="false"
+                android:onClick="append"/>
 
-        <Button
-            android:id="@+id/inNine"
-            android:background="@drawable/input_button_bg"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:textSize="30sp"
-            android:text="9"
-            android:onClick="append"/>
+            <Button
+                android:id="@+id/actFunction"
+                android:background="@drawable/action_button_bg"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:textSize="30sp"
+                android:textAllCaps="false"
+                android:text="f(x)"
+                android:textColor="#EEEEEE"
+                android:onClick=""/>
 
-    </LinearLayout>
+            <Button
+                android:id="@+id/inSubtraction"
+                android:background="@drawable/input_button_bg"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:textSize="30sp"
+                android:text=" - "
+                android:onClick="append" />
 
-    <!--Row 2-->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:orientation="horizontal">
+            <Button
+                android:id="@+id/inDot"
+                android:background="@drawable/input_button_bg"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:textSize="40sp"
+                android:text="."
+                android:onClick="append"/>
 
-        <Button
-            android:id="@+id/inExponent"
-            android:background="@drawable/input_button_bg"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:textSize="30sp"
-            android:text="exp "
-            android:textAllCaps="false"
-            android:onClick="append"/>
+            <Button
+                android:id="@+id/inZero"
+                android:background="@drawable/input_button_bg"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:textSize="30sp"
+                android:text="0"
+                android:onClick="append"/>
 
-        <Button
-            android:id="@+id/inSinh"
-            android:background="@drawable/input_button_bg"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:textSize="30sp"
-            android:text="sinh "
-            android:textAllCaps="false"
-            android:onClick="append"/>
+            <Button
+                android:id="@+id/actEqual"
+                android:background="@drawable/action_button_bg"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:textSize="40sp"
+                android:text="="
+                android:textColor="#EEEEEE"
+                android:onClick="evaluate"/>
 
-        <Button
-            android:id="@+id/inSin"
-            android:background="@drawable/input_button_bg"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:textSize="30sp"
-            android:text="sin "
-            android:textAllCaps="false"
-            android:onClick="append"/>
-
-        <Button
-            android:id="@+id/inMod"
-            android:background="@drawable/input_button_bg"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:textSize="30sp"
-            android:text=" % "
-            android:textAllCaps="false"
-            android:onClick="append"/>
-
-
-        <Button
-            android:id="@+id/inDivision"
-            android:background="@drawable/input_button_bg"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:textSize="40sp"
-            android:text=" / "
-            android:onClick="append"/>
-
-        <Button
-            android:id="@+id/inFour"
-            android:background="@drawable/input_button_bg"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:textSize="30sp"
-            android:text="4"
-            android:onClick="append"/>
-
-        <Button
-            android:id="@+id/inFive"
-            android:background="@drawable/input_button_bg"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:textSize="30sp"
-            android:text="5"
-            android:onClick="append"/>
-
-        <Button
-            android:id="@+id/inSix"
-            android:background="@drawable/input_button_bg"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:textSize="30sp"
-            android:text="6"
-            android:onClick="append"/>
-
-
-
-    </LinearLayout>
-
-    <!--Row 3-->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:orientation="horizontal">
-
-        <Button
-            android:id="@+id/inSquareRoot"
-            android:background="@drawable/input_button_bg"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:textSize="30sp"
-            android:text="sqrt "
-            android:textAllCaps="false"
-            android:onClick="append"/>
-
-        <Button
-            android:id="@+id/inCosh"
-            android:background="@drawable/input_button_bg"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:textSize="30sp"
-            android:text="cosh "
-            android:textAllCaps="false"
-            android:onClick="append"/>
-
-        <Button
-            android:id="@+id/inCos"
-            android:background="@drawable/input_button_bg"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:textSize="30sp"
-            android:text="cos "
-            android:textAllCaps="false"
-            android:onClick="append"/>
-
-        <Button
-            android:id="@+id/inLog"
-            android:background="@drawable/input_button_bg"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:textSize="30sp"
-            android:text="log "
-            android:textAllCaps="false"
-            android:onClick="append"/>
-
-
-        <Button
-            android:id="@+id/inAddition"
-            android:background="@drawable/input_button_bg"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:textSize="30sp"
-            android:text=" + "
-            android:onClick="append"/>
-
-        <Button
-            android:id="@+id/inOne"
-            android:background="@drawable/input_button_bg"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:textSize="30sp"
-            android:text="1"
-            android:onClick="append"/>
-
-        <Button
-            android:id="@+id/inTwo"
-            android:background="@drawable/input_button_bg"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:textSize="30sp"
-            android:text="2"
-            android:onClick="append"/>
-
-        <Button
-            android:id="@+id/inThree"
-            android:background="@drawable/input_button_bg"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:textSize="30sp"
-            android:text="3"
-            android:onClick="append"/>
-
-    </LinearLayout>
-
-    <!--Row 4-->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:orientation="horizontal">
-
-        <Button
-            android:id="@+id/actUndo"
-            android:background="@drawable/action_button_bg"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:textSize="30sp"
-            android:text="undo"
-            android:textAllCaps="false"
-            android:textColor="#EEEEEE"
-            android:onClick="undo"/>
-
-        <Button
-            android:id="@+id/inTanh"
-            android:background="@drawable/input_button_bg"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:textSize="30sp"
-            android:text="tanh "
-            android:textAllCaps="false"
-            android:onClick="append"/>
-
-        <Button
-            android:id="@+id/inTan"
-            android:background="@drawable/input_button_bg"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:textSize="30sp"
-            android:text="tan "
-            android:textAllCaps="false"
-            android:onClick="append"/>
-
-        <Button
-            android:id="@+id/actFunction"
-            android:background="@drawable/action_button_bg"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:textSize="30sp"
-            android:textAllCaps="false"
-            android:text="f(x)"
-            android:textColor="#EEEEEE"
-            android:onClick=""/>
-
-        <Button
-            android:id="@+id/inSubtraction"
-            android:background="@drawable/input_button_bg"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:textSize="30sp"
-            android:text=" - "
-            android:onClick="append" />
-
-        <Button
-            android:id="@+id/inDot"
-            android:background="@drawable/input_button_bg"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:textSize="40sp"
-            android:text="."
-            android:onClick="append"/>
-
-        <Button
-            android:id="@+id/inZero"
-            android:background="@drawable/input_button_bg"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:textSize="30sp"
-            android:text="0"
-            android:onClick="append"/>
-
-        <Button
-            android:id="@+id/actEqual"
-            android:background="@drawable/action_button_bg"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:textSize="40sp"
-            android:text="="
-            android:textColor="#EEEEEE"
-            android:onClick="evaluate"/>
+        </LinearLayout>
 
     </LinearLayout>
 
