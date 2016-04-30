@@ -28,10 +28,24 @@ public class LeftBracket extends UnaryOperator {
     }
 
     @Override
+    public ExpressionTree getDerivative() { return operand.getDerivative(); }
+
+    @Override
     public float evaluate() {
         return operand.evaluate();
     }
 
     @Override
     public int getPrecedence() { return BRACKET_PRECEDENCE; }
+
+    @Override
+    public ExpressionTree getClone() {
+        LeftBracket clone = new LeftBracket();
+        clone.insertExpression(operand.getClone());
+        clone.isClosed = isClosed;
+        return clone;
+    }
+
+    @Override
+    public String toString() { return "( " + operand.toString() + " )"; }
 }

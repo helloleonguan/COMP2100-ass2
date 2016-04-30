@@ -109,4 +109,29 @@ public class ExpressionTreeTest {
             assertEquals("testIC " + i + " failed", ansIC[i], ExpressionTree.checkInput(testsIC[i]));
         }
     }
+
+    private static final int NUMBER_OF_TEST_POINTS = 1000;
+    private static final float[] functionTestPoints = new float[NUMBER_OF_TEST_POINTS];
+    static {
+        for (int i=0; i<NUMBER_OF_TEST_POINTS; i++) {
+            functionTestPoints[i] = i - (NUMBER_OF_TEST_POINTS / 2);
+        }
+    }
+
+    private static final String[] testsDX = {
+            "2 * x",
+            "exp x",
+            "log x",
+            "exp cos x",
+            "( cos x ) * tan x"
+    };
+
+    private static final ExpressionTree[] ansDX = new ExpressionTree[testsDX.length];
+
+    @Test
+    public void differentiationTest() throws Exception {
+        for (int i=0; i<testsDX.length; i++) {
+            System.out.println(ExpressionTree.parseStringToTree(testsDX[i]).getDerivative().getSimplified().toString());
+        }
+    }
 }

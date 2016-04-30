@@ -49,6 +49,7 @@ public class MainActivity extends Activity {
     int rstFlag = 0;
     ArrayList<String> numInputs = new ArrayList<>();
     Stack<Integer> inputStack;
+    String currentExpression;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -143,6 +144,11 @@ public class MainActivity extends Activity {
             max_lines = 2;
         }
 
+        if (rstFlag == 1 && funcFlag) {
+            tvDisplay.setText(currentExpression);
+            rstFlag = 0;
+            return;
+        }
         if (!(rstFlag == 1 && numInputs.contains(((Button) v).getText().toString()) )) {
             int pre_line_count = tvDisplay.getLineCount();
             tvDisplay.setText(tvDisplay.getText().toString() + ((Button) v).getText().toString());
@@ -167,6 +173,8 @@ public class MainActivity extends Activity {
         tvDisplay.setText("");
         tvDisplay.scrollTo(0, 0);
         rstFlag = 0;
+        funcFlag = false;
+        evaluateFlag = false;
     }
 
     /**
@@ -313,6 +321,10 @@ public class MainActivity extends Activity {
 
         if (funcFlag) {
             if (!evaluateFlag) { // The user entered a function, let them specify the value to evaluate at
+                if (rstFlag == 1) {
+                    rstFlag = 0;
+                    expression = currentExpression;
+                }
                 tvDisplay.setText(expression + "\n");
                 evaluateFlag = true;
                 return;
@@ -320,6 +332,8 @@ public class MainActivity extends Activity {
                 x = ExpressionTree.parseStringToTree(expression.substring(expression.indexOf('\n') + 1)).evaluate();
                 expression = expression.substring(0, expression.indexOf('\n'));
                 tvDisplay.setText(expression);
+                currentExpression = expression;
+                evaluateFlag = false;
             }
         }
 

@@ -12,6 +12,13 @@ public class Scalar extends ExpressionTree {
     Scalar() {}
     Scalar(float value) { this.value = value; }
 
+    @Override
+    public ExpressionTree getDerivative() { return new Scalar(0); }
+
+    @Override
+    public ExpressionTree getSimplified() { return this; }
+
+    @Override
     public float evaluate() {
         return value;
     }
@@ -27,4 +34,12 @@ public class Scalar extends ExpressionTree {
 
     @Override
     public int getPrecedence() { return SCALAR_PRECEDENCE; }
+
+    @Override
+    public ExpressionTree getClone() { return new Scalar(value); }
+
+    @Override
+    public String toString() { return String.valueOf(value); }
+
+    float getValue() { return value; }
 }

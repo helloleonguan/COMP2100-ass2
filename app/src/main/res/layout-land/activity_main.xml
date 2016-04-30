@@ -382,16 +382,16 @@
                 android:onClick="append"/>
 
             <Button
-                android:id="@+id/actFunction"
+                android:id="@+id/actVariable"
                 android:background="@drawable/action_button_bg"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:textSize="30sp"
                 android:textAllCaps="false"
-                android:text="f(x)"
+                android:text="x"
                 android:textColor="#EEEEEE"
-                android:onClick=""/>
+                android:onClick="appendVar"/>
 
             <Button
                 android:id="@+id/inSubtraction"

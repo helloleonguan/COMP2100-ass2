@@ -12,6 +12,8 @@ import java.util.HashMap;
  * trees from Strings, and evaluating expressions
  */
 public abstract class ExpressionTree {
+    static final float DELTA = 0.00001f;
+
     public static class Operation {
         Method operation;
         int precedence;
@@ -24,7 +26,7 @@ public abstract class ExpressionTree {
 
     protected ExpressionTree parent;
     protected int precedence;
-    private static HashMap<String, Operation> tokenParser = new HashMap<>();
+    static HashMap<String, Operation> tokenParser = new HashMap<>();
     static {
         try {
             Class[] bArgs = {float.class, float.class};
@@ -56,6 +58,7 @@ public abstract class ExpressionTree {
         boolean scalarIsNeeded = true;
         int bracketsNeeded = 0;
         for (int i=0; i<splitInput.length; i++) {
+            if (splitInput[i].equals("")) return false;
             if (!tokenParser.containsKey(splitInput[i])) {
                 if (!scalarIsNeeded) {
                     return false;
@@ -117,9 +120,9 @@ public abstract class ExpressionTree {
         } else if (tokenParser.containsKey(token)) {
             Operation op = tokenParser.get(token);
             if (op.operation.getParameterTypes().length == 2) {
-                return new BinaryOperator(op.operation, op.precedence);
+                return new BinaryOperator(op);
             } else {
-                return new UnaryOperator(op.operation, op.precedence);
+                return new UnaryOperator(op);
             }
         } else {
             return new Scalar(Float.parseFloat(token));
@@ -148,7 +151,10 @@ public abstract class ExpressionTree {
     abstract ExpressionTree insertExpression(ExpressionTree expr);
     public abstract float evaluate();
     public float evaluate(float x) { return evaluate(); }
+    public abstract ExpressionTree getDerivative();
+    public abstract ExpressionTree getSimplified();
     abstract int getPrecedence();
+    abstract ExpressionTree getClone();
 
     void setParent(ExpressionTree node) { parent = node; }
     ExpressionTree getParent() { return parent; }
