@@ -120,6 +120,7 @@ public class ExpressionTreeTest {
 
     private static final String[] testsDX = {
             "2 * x",
+            "x * x",
             "exp x",
             "log x",
             "exp cos x",

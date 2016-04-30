@@ -134,7 +134,7 @@ public class BinaryOperator extends ExpressionTree {
         left = left.getSimplified();
         right = right.getSimplified();
         if (operation.getName().equals("mult")) {
-            if (left instanceof Scalar) {
+            if (left.getClass().equals(Scalar.class)) {
                 if (Math.abs(((Scalar) left).getValue() - 1) < ExpressionTree.DELTA) {
                     return right;
                 }
@@ -142,7 +142,7 @@ public class BinaryOperator extends ExpressionTree {
                     return new Scalar(0);
                 }
             }
-            if (right instanceof Scalar) {
+            if (right.getClass().equals(Scalar.class)) {
                 if (Math.abs(((Scalar) right).getValue() - 1) < ExpressionTree.DELTA) {
                     return left;
                 }
@@ -151,12 +151,12 @@ public class BinaryOperator extends ExpressionTree {
                 }
             }
         } else if (operation.getName().equals("add") || operation.getName().equals("sub")) {
-            if (left instanceof Scalar) {
+            if (left.getClass().equals(Scalar.class)) {
                 if (Math.abs(((Scalar) left).getValue()) < ExpressionTree.DELTA) {
                     return right;
                 }
             }
-            if (right instanceof Scalar) {
+            if (right.getClass().equals(Scalar.class)) {
                 if (Math.abs(((Scalar) right).getValue()) < ExpressionTree.DELTA) {
                     return left;
                 }
@@ -198,7 +198,7 @@ public class BinaryOperator extends ExpressionTree {
 
     @Override
     public String toString() {
-        return left.toString() + " " + operation.getName() + " " + right.toString();
+        return left.toString() + " " + OperationDatabase.reverseTokenizer.get(operation.getName()) + " " + right.toString();
     }
 
     Method getOperation() { return operation; }

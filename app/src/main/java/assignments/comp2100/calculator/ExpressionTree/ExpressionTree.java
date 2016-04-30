@@ -41,9 +41,6 @@ public abstract class ExpressionTree {
             tokenParser.put("cos", new Operation(OperationDatabase.class.getDeclaredMethod("cos", uArg), Integer.MAX_VALUE));
             tokenParser.put("sin", new Operation(OperationDatabase.class.getDeclaredMethod("sin", uArg), Integer.MAX_VALUE));
             tokenParser.put("tan", new Operation(OperationDatabase.class.getDeclaredMethod("tan", uArg), Integer.MAX_VALUE));
-            tokenParser.put("cosh", new Operation(OperationDatabase.class.getDeclaredMethod("cosh", uArg), Integer.MAX_VALUE));
-            tokenParser.put("sinh", new Operation(OperationDatabase.class.getDeclaredMethod("sinh", uArg), Integer.MAX_VALUE));
-            tokenParser.put("tanh", new Operation(OperationDatabase.class.getDeclaredMethod("tanh", uArg), Integer.MAX_VALUE));
             tokenParser.put("sqrt", new Operation(OperationDatabase.class.getDeclaredMethod("sqrt", uArg), Integer.MAX_VALUE));
             tokenParser.put("abs", new Operation(OperationDatabase.class.getDeclaredMethod("abs", uArg), Integer.MAX_VALUE));
             tokenParser.put("exp", new Operation(OperationDatabase.class.getDeclaredMethod("exp", uArg), Integer.MAX_VALUE));

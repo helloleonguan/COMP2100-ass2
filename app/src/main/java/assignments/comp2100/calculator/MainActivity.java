@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -44,6 +45,7 @@ public class MainActivity extends Activity {
     ArrayList<String> rightSpaceInputs;
 
     //Variables
+    boolean graphFlag = false;
     boolean funcFlag = false;
     boolean evaluateFlag = false;
     int rstFlag = 0;
@@ -142,6 +144,12 @@ public class MainActivity extends Activity {
             max_lines = 4;
         } else {
             max_lines = 2;
+        }
+
+        if (graphFlag) {
+            findViewById(R.id.graphic_display).setVisibility(View.GONE);
+            tvDisplay.setVisibility(View.VISIBLE);
+            graphFlag = false;
         }
 
         if (rstFlag == 1 && funcFlag) {
@@ -362,23 +370,41 @@ public class MainActivity extends Activity {
         }
     }
 
-    public void drawFunction(View v) {
-        funcFlag = true;
-        Canvas screen = new Canvas();
-        Paint paint = new Paint();
-        paint.setARGB(100, 100, 200, 100);
-        Bitmap bm = Bitmap.createBitmap(tvDisplay.getWidth(), tvDisplay.getHeight(), Bitmap.Config.RGB_565);
-        for (int i=0; i<tvDisplay.getBackground().getBounds().width(); i++) {
-            float functionHeight = ExpressionTree.parseStringToTree(tvDisplay.getText().toString()).evaluate();
-            if (functionHeight < tvDisplay.getBackground().getBounds().height()) {
-                bm.setPixel(tvDisplay.getBackground().getBounds().left + i, (int) (tvDisplay.getHeight() - functionHeight), 500);
-                bm.setPixel(tvDisplay.getBackground().getBounds().left + i, (int) (tvDisplay.getHeight() - functionHeight) - 1, 500);
-                bm.setPixel(tvDisplay.getBackground().getBounds().left + i, (int) (tvDisplay.getHeight() - functionHeight) + 1, 500);
-            }
-        }
+    /**
+     * Written by Nathan F. Ealzar
+     * Transforms the current ExpressionTree into one representing its derivative
+     */
+    public void differentiate(View v) {
+        tvDisplay.setText(ExpressionTree.parseStringToTree(tvDisplay.getText().toString()).getDerivative().getSimplified().toString());
+    }
 
-        SpannableStringBuilder builder = new SpannableStringBuilder();
-        builder.append(" ", new ImageSpan(this, bm), 0);
-        tvDisplay.setText(builder);
+    private static final int WINDOW_SCALE_HORIZONTAL = 5;
+    private static final int WINDOW_SCALE_VERTICAL = 5;
+
+    /**
+     * Written by Nathan F. Elazar
+     * Plots a graph of the current ExpressionTree over the display
+     */
+    public void drawFunction(View v) {
+        graphFlag = !graphFlag;
+
+        ((ImageView)findViewById(R.id.graphic_display)).setImageResource(0);
+        if (graphFlag) {
+            Bitmap bm = Bitmap.createBitmap(tvDisplay.getWidth(), tvDisplay.getHeight(), Bitmap.Config.RGB_565);
+            for (int i = 0; i < tvDisplay.getWidth(); i++) {
+                float functionHeight = ExpressionTree.parseStringToTree(tvDisplay.getText().toString()).evaluate((float) ((i - (tvDisplay.getWidth() / 2.0)) * WINDOW_SCALE_HORIZONTAL / tvDisplay.getWidth()));
+                int pixelHeight = (int) (functionHeight * tvDisplay.getHeight() / (float) WINDOW_SCALE_VERTICAL);
+                if (2 * pixelHeight < tvDisplay.getHeight() && -2 * pixelHeight < tvDisplay.getHeight()) {
+                    bm.setPixel(i, (int) ((tvDisplay.getHeight() / 2.0) - pixelHeight), 500);
+                }
+            }
+
+            tvDisplay.setVisibility(View.GONE);
+            findViewById(R.id.graphic_display).setVisibility(View.VISIBLE);
+            ((ImageView)findViewById(R.id.graphic_display)).setImageBitmap(bm);
+        } else {
+            findViewById(R.id.graphic_display).setVisibility(View.GONE);
+            tvDisplay.setVisibility(View.VISIBLE);
+        }
     }
 }
