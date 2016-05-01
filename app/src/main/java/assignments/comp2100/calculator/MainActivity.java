@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -378,7 +379,7 @@ public class MainActivity extends Activity {
         tvDisplay.setText(ExpressionTree.parseStringToTree(tvDisplay.getText().toString()).getDerivative().getSimplified().toString());
     }
 
-    private static final int WINDOW_SCALE_HORIZONTAL = 5;
+    private static final int WINDOW_SCALE_HORIZONTAL = 6;
     private static final int WINDOW_SCALE_VERTICAL = 5;
 
     /**
@@ -391,13 +392,59 @@ public class MainActivity extends Activity {
         ((ImageView)findViewById(R.id.graphic_display)).setImageResource(0);
         if (graphFlag) {
             Bitmap bm = Bitmap.createBitmap(tvDisplay.getWidth(), tvDisplay.getHeight(), Bitmap.Config.RGB_565);
+            //Draw x and y axis
+            for (int i=0; i<tvDisplay.getWidth(); i++) {
+                bm.setPixel(i, (int)(tvDisplay.getHeight() / 2.0), 0xEEEEEE);
+            }
+            for (int i=0; i<tvDisplay.getHeight(); i++) {
+                bm.setPixel((int)(tvDisplay.getWidth() / 2.0), i, 0xEEEEEE);
+            }
+
+            float maxFunctionAbs = 1;
+            float[] functionHeights = new float[tvDisplay.getWidth()];
             for (int i = 0; i < tvDisplay.getWidth(); i++) {
-                float functionHeight = ExpressionTree.parseStringToTree(tvDisplay.getText().toString()).evaluate((float) ((i - (tvDisplay.getWidth() / 2.0)) * WINDOW_SCALE_HORIZONTAL / tvDisplay.getWidth()));
-                int pixelHeight = (int) (functionHeight * tvDisplay.getHeight() / (float) WINDOW_SCALE_VERTICAL);
-                if (2 * pixelHeight < tvDisplay.getHeight() && -2 * pixelHeight < tvDisplay.getHeight()) {
-                    bm.setPixel(i, (int) ((tvDisplay.getHeight() / 2.0) - pixelHeight), 500);
+                functionHeights[i] = ExpressionTree.parseStringToTree(tvDisplay.getText().toString()).evaluate((float) ((i - (tvDisplay.getWidth() / 2.0)) * WINDOW_SCALE_HORIZONTAL / tvDisplay.getWidth()));
+                if (functionHeights[i] == Float.POSITIVE_INFINITY || functionHeights[i] == Float.NEGATIVE_INFINITY || Float.isNaN(functionHeights[i])) continue;
+                maxFunctionAbs = Math.abs(functionHeights[i]) > maxFunctionAbs ? Math.abs(functionHeights[i]) : maxFunctionAbs;
+            }
+            maxFunctionAbs = maxFunctionAbs > tvDisplay.getHeight() * 0.5f ? tvDisplay.getHeight() * 0.5f : maxFunctionAbs;
+            int previousPixelHeight = 0;
+            boolean previousExists = false;
+            for (int i=0; i<tvDisplay.getWidth(); i++) {
+                if (functionHeights[i] != Float.POSITIVE_INFINITY && functionHeights[i] != Float.NEGATIVE_INFINITY && !Float.isNaN(functionHeights[i])) {
+                    int pixelHeight = (int) (0.5 * tvDisplay.getHeight() * (1 - functionHeights[i] / (maxFunctionAbs + 1)));
+                    if (i == (int)((tvDisplay.getWidth() / 2.0) - 5)) {
+                        int test = 0;
+                        test++;
+                        System.out.println("test");
+                    }
+                    if (!previousExists) {
+                        previousPixelHeight = pixelHeight;
+                        previousExists = true;
+                    }
+                    if (pixelHeight >= 0 && pixelHeight < tvDisplay.getHeight()) {
+                        if (previousPixelHeight >= 0 && previousPixelHeight < tvDisplay.getHeight()) {
+                            for (int j = Math.min(pixelHeight, previousPixelHeight); j <= Math.max(pixelHeight, previousPixelHeight); j++) {
+                                bm.setPixel(i, j, 0xEE00);
+                            }
+                        } else {
+                            bm.setPixel(i, pixelHeight, 0xEE00);
+                        }
+                    }
+                    previousPixelHeight = pixelHeight;
+                } else {
+                    previousExists = false;
                 }
             }
+
+            Canvas canvas = new Canvas(bm);
+            Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+            paint.setColor(Color.rgb(220, 220, 240));
+            paint.setTextSize(14);
+            paint.setShadowLayer(1f, 0f, 1f, Color.WHITE);
+
+            canvas.drawText(String.valueOf(WINDOW_SCALE_HORIZONTAL / 2), tvDisplay.getWidth() - 15, (int) (tvDisplay.getHeight() / 2.0) - 10, paint);
+            canvas.drawText(String.valueOf(maxFunctionAbs), (int)(tvDisplay.getWidth() / 2.0) + 5, 10, paint);
 
             tvDisplay.setVisibility(View.GONE);
             findViewById(R.id.graphic_display).setVisibility(View.VISIBLE);

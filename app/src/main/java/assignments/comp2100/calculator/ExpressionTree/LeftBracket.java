@@ -31,8 +31,10 @@ public class LeftBracket extends UnaryOperator {
     public ExpressionTree getDerivative() { return operand.getDerivative(); }
 
     @Override
-    public float evaluate() {
-        return operand.evaluate();
+    public float evaluate() { return operand.evaluate(); }
+    @Override
+    public float evaluate(float x) {
+        return operand.evaluate(x);
     }
 
     @Override

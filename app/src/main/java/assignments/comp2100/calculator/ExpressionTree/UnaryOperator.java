@@ -1,5 +1,6 @@
 package assignments.comp2100.calculator.ExpressionTree;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 
@@ -113,8 +114,12 @@ public class UnaryOperator extends ExpressionTree {
     @Override
     public float evaluate() {
         try {
-            return (float) operation.invoke(null, operand.evaluate());
-        } catch (Exception e) {
+            try {
+                return (float) operation.invoke(null, operand.evaluate());
+            } catch (IllegalAccessException e) {
+                return 0;
+            }
+        } catch (InvocationTargetException e) {
             return 0;
         }
     }
@@ -122,9 +127,13 @@ public class UnaryOperator extends ExpressionTree {
     @Override
     public float evaluate(float x) {
         try {
-            return (float) operation.invoke(null, operand.evaluate(x));
-        } catch (Exception e) {
-            return 0;
+            try {
+                return (float) operation.invoke(null, operand.evaluate(x));
+            } catch (IllegalAccessException e) {
+                return 0;
+            }
+        } catch (InvocationTargetException e) {
+            return Float.NaN;
         }
     }
 
