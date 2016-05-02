@@ -35,6 +35,7 @@ public abstract class ExpressionTree {
             tokenParser.put("-", new Operation(OperationDatabase.class.getDeclaredMethod("sub", bArgs), 1));
             tokenParser.put("*", new Operation(OperationDatabase.class.getDeclaredMethod("mult", bArgs), 2));
             tokenParser.put("%", new Operation(OperationDatabase.class.getDeclaredMethod("mod", bArgs), 2));
+            tokenParser.put("^", new Operation(OperationDatabase.class.getDeclaredMethod("pow", bArgs), 3));
             tokenParser.put("/", new Operation(OperationDatabase.class.getDeclaredMethod("div", bArgs), 2));
             tokenParser.put("(", new Operation(OperationDatabase.class.getDeclaredMethod("identity", uArg), 0));
             tokenParser.put(")", new Operation(OperationDatabase.class.getDeclaredMethod("identity", uArg), 0));

@@ -124,7 +124,10 @@ public class ExpressionTreeTest {
             "exp x",
             "log x",
             "exp cos x",
-            "( cos x ) * tan x"
+            "( cos x ) * tan x",
+            "x ^ 3",
+            "x ^ x",
+            "2 ^ x"
     };
 
     private static final ExpressionTree[] ansDX = new ExpressionTree[testsDX.length];

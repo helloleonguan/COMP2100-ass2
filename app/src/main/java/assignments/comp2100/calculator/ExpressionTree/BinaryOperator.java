@@ -22,6 +22,8 @@ public class BinaryOperator extends ExpressionTree {
             derivativeMap.put("sub", BinaryOperator.class.getDeclaredMethod("additionRule"));
             derivativeMap.put("mult", BinaryOperator.class.getDeclaredMethod("productRule"));
             derivativeMap.put("div", BinaryOperator.class.getDeclaredMethod("quotientRule"));
+            derivativeMap.put("mod", BinaryOperator.class.getDeclaredMethod("moduloRule"));
+            derivativeMap.put("pow", BinaryOperator.class.getDeclaredMethod("powerRule"));
         } catch (Exception e) {
             System.err.println("could not initialize binary derivativeMap");
         }
@@ -86,6 +88,39 @@ public class BinaryOperator extends ExpressionTree {
         division.insertExpression(quotient);
 
         return division;
+    }
+    ExpressionTree moduloRule() {
+        return left.getDerivative();
+    }
+    ExpressionTree powerRule() {
+        //d/dx(f(x)^(g(x))) = f(x)^(g(x)-1) (g(x) f'(x)+f(x) log(f(x)) g'(x))
+        ExpressionTree middle = new BinaryOperator(ExpressionTree.tokenParser.get("*"));
+        ExpressionTree left = new BinaryOperator(ExpressionTree.tokenParser.get("^"));
+        ExpressionTree right = new BinaryOperator(ExpressionTree.tokenParser.get("+"));
+
+        ExpressionTree gxm1 = new BinaryOperator(ExpressionTree.tokenParser.get("-"));
+        left.insertExpression(this.left.getClone());
+        gxm1.insertExpression(this.right.getClone());
+        gxm1.insertExpression(new Scalar(1));
+        left.insertExpression(gxm1);
+
+        ExpressionTree gxdfx = new BinaryOperator(ExpressionTree.tokenParser.get("*"));
+        gxdfx.insertExpression(this.right.getClone());
+        gxdfx.insertExpression(this.left.getDerivative());
+        right.insertExpression(gxdfx);
+        ExpressionTree logfx = new UnaryOperator(ExpressionTree.tokenParser.get("log"));
+        logfx.insertExpression(this.left.getClone());
+        ExpressionTree fxlogfx = new BinaryOperator(ExpressionTree.tokenParser.get("*"));
+        fxlogfx.insertExpression(this.left.getClone());
+        fxlogfx.insertExpression(logfx);
+        ExpressionTree fxlogfxdgx = new BinaryOperator(ExpressionTree.tokenParser.get("*"));
+        fxlogfxdgx.insertExpression(fxlogfx);
+        fxlogfxdgx.insertExpression(this.right.getDerivative());
+        right.insertExpression(fxlogfxdgx);
+
+        middle.insertExpression(left);
+        middle.insertExpression(right);
+        return middle;
     }
 
     /**
@@ -163,6 +198,9 @@ public class BinaryOperator extends ExpressionTree {
                 }
             }
         }
+        if (left.getClass().equals(Scalar.class) && right.getClass().equals(Scalar.class)) {
+            return new Scalar(evaluate());
+        }
         return this;
     }
 
@@ -207,7 +245,7 @@ public class BinaryOperator extends ExpressionTree {
 
     @Override
     public String toString() {
-        return left.toString() + " " + OperationDatabase.reverseTokenizer.get(operation.getName()) + " " + right.toString();
+        return " ( " + left.toString() + " " + OperationDatabase.reverseTokenizer.get(operation.getName()) + " " + right.toString() + " ) ";
     }
 
     Method getOperation() { return operation; }

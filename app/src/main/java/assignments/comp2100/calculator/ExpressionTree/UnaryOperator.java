@@ -151,6 +151,6 @@ public class UnaryOperator extends ExpressionTree {
 
     @Override
     public String toString() {
-        return OperationDatabase.reverseTokenizer.get(operation.getName()) + " " + operand.toString();
+        return OperationDatabase.reverseTokenizer.get(operation.getName()) + " ( " + operand.toString() + " ) ";
     }
 }

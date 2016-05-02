@@ -11,6 +11,7 @@ public abstract class OperationDatabase {
     static float mult(float x, float y) { return x * y; }
     static float div(float x, float y) { return x / y; }
     static float mod(float x, float y) { return x % y; }
+    static float pow(float x, float y) { return (float) Math.pow(x, y); }
     static float identity(float x) { return x; }
     static float abs(float x) { return Math.abs(x); }
     static float sin(float x) { return (float) Math.sin(Math.toRadians(x)); }
@@ -27,6 +28,7 @@ public abstract class OperationDatabase {
             reverseTokenizer.put("sub", "-");
             reverseTokenizer.put("mult", "*");
             reverseTokenizer.put("mod", "%");
+            reverseTokenizer.put("pow", "^");
             reverseTokenizer.put("div", "/");
             reverseTokenizer.put("cos", "cos");
             reverseTokenizer.put("sin", "sin");
