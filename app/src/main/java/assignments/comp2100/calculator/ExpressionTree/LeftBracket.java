@@ -31,6 +31,9 @@ public class LeftBracket extends UnaryOperator {
     public ExpressionTree getDerivative() { return operand.getDerivative(); }
 
     @Override
+    public ExpressionTree getSimplified() { return operand.getSimplified(); }
+
+    @Override
     public float evaluate() { return operand.evaluate(); }
     @Override
     public float evaluate(float x) {

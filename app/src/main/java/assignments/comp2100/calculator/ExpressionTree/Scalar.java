@@ -40,6 +40,4 @@ public class Scalar extends ExpressionTree {
 
     @Override
     public String toString() { return String.valueOf(value); }
-
-    float getValue() { return value; }
 }

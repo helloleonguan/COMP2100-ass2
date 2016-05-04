@@ -169,31 +169,40 @@ public class BinaryOperator extends ExpressionTree {
     public ExpressionTree getSimplified() {
         left = left.getSimplified();
         right = right.getSimplified();
-        if (operation.getName().equals("mult")) {
+        if (operation.getName().equals("mult") || operation.getName().equals("div")) {
             if (left.getClass().equals(Scalar.class)) {
-                if (Math.abs(((Scalar) left).getValue() - 1) < ExpressionTree.DELTA) {
+                if (Math.abs(left.evaluate() - 1) < ExpressionTree.DELTA && operation.getName().equals("mult")) {
                     return right;
                 }
-                if (Math.abs(((Scalar) left).getValue()) < ExpressionTree.DELTA) {
+                if (Math.abs(left.evaluate()) < ExpressionTree.DELTA) {
                     return new Scalar(0);
                 }
             }
             if (right.getClass().equals(Scalar.class)) {
-                if (Math.abs(((Scalar) right).getValue() - 1) < ExpressionTree.DELTA) {
+                if (Math.abs(right.evaluate() - 1) < ExpressionTree.DELTA) {
                     return left;
                 }
-                if (Math.abs(((Scalar) right).getValue()) < ExpressionTree.DELTA) {
+                if (Math.abs(right.evaluate()) < ExpressionTree.DELTA) {
                     return new Scalar(0);
                 }
             }
         } else if (operation.getName().equals("add") || operation.getName().equals("sub")) {
             if (left.getClass().equals(Scalar.class)) {
-                if (Math.abs(((Scalar) left).getValue()) < ExpressionTree.DELTA) {
+                if (Math.abs(left.evaluate()) < ExpressionTree.DELTA) {
                     return right;
                 }
             }
             if (right.getClass().equals(Scalar.class)) {
-                if (Math.abs(((Scalar) right).getValue()) < ExpressionTree.DELTA) {
+                if (Math.abs(right.evaluate()) < ExpressionTree.DELTA) {
+                    return left;
+                }
+            }
+        } else if (operation.getName().equals("pow")) {
+            if (right.getClass().equals(Scalar.class)) {
+                if (Math.abs(right.evaluate()) < ExpressionTree.DELTA) {
+                    return new Scalar(1);
+                }
+                if (Math.abs(right.evaluate() - 1) < ExpressionTree.DELTA) {
                     return left;
                 }
             }

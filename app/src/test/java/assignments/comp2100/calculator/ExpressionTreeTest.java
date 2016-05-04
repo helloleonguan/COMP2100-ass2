@@ -16,7 +16,11 @@ public class ExpressionTreeTest {
             "4 * 3 + 5 * 2",
             "3 - 2 - 4 / 2 * 5 + 6 * 8",
             "4 / 8 * 2 / 4 - 6",
-            "6 / 3 / 2"
+            "6 / 3 / 2",
+            "2 ^ 3",
+            "2 ^ 2 ^ 2",
+            "3 + 2 * 4 ^ 2",
+            "3 ^ 2 * 4 + 2",
     };
     private static final float[] ansAM = {
             19,
@@ -25,7 +29,11 @@ public class ExpressionTreeTest {
             22,
             39,
             -5.75f,
-            1
+            1,
+            8,
+            16,
+            35,
+            38
     };
 
     @Test
@@ -110,14 +118,6 @@ public class ExpressionTreeTest {
         }
     }
 
-    private static final int NUMBER_OF_TEST_POINTS = 1000;
-    private static final float[] functionTestPoints = new float[NUMBER_OF_TEST_POINTS];
-    static {
-        for (int i=0; i<NUMBER_OF_TEST_POINTS; i++) {
-            functionTestPoints[i] = i - (NUMBER_OF_TEST_POINTS / 2);
-        }
-    }
-
     private static final String[] testsDX = {
             "2 * x",
             "x * x",
@@ -129,8 +129,6 @@ public class ExpressionTreeTest {
             "x ^ x",
             "2 ^ x"
     };
-
-    private static final ExpressionTree[] ansDX = new ExpressionTree[testsDX.length];
 
     @Test
     public void differentiationTest() throws Exception {

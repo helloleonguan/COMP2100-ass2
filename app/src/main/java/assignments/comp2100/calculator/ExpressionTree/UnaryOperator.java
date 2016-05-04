@@ -108,6 +108,9 @@ public class UnaryOperator extends ExpressionTree {
     @Override
     public ExpressionTree getSimplified() {
         operand = operand.getSimplified();
+        if (operand.getClass().equals(Scalar.class)) {
+            return new Scalar(evaluate());
+        }
         return this;
     }
 
