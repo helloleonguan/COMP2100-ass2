@@ -254,7 +254,7 @@ public class BinaryOperator extends ExpressionTree {
 
     @Override
     public String toString() {
-        return " ( " + left.toString() + " " + OperationDatabase.reverseTokenizer.get(operation.getName()) + " " + right.toString() + " ) ";
+        return "(" + left.toString() + OperationDatabase.reverseTokenizer.get(operation.getName()) + right.toString() + ")";
     }
 
     Method getOperation() { return operation; }

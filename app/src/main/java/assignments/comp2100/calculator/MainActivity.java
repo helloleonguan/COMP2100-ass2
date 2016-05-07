@@ -235,8 +235,10 @@ public class MainActivity extends Activity {
         String rst = "";
 
         for (index = 0; index < s.length();){
-
-            if (Character.isLetter(s.charAt(index)) && s.charAt(index) != 'x'){
+            if (s.charAt(index) == 'x') {
+                rst += "x";
+                index ++;
+            } else if (Character.isLetter(s.charAt(index))){
                 int flag = 0;
                 for (String function : rightSpaceInputs) {
                     String head = (index + function.length() >= s.length())? s.substring(index) : s.substring(index,index+function.length());
@@ -324,7 +326,6 @@ public class MainActivity extends Activity {
      */
     public void evaluate(View v) {
         String expression = tvDisplay.getText().toString();
-        expression = parseAndAddSpace(expression);
         float x = 0;
 
         if (expression == null || expression.equals("")){
@@ -341,8 +342,8 @@ public class MainActivity extends Activity {
                 evaluateFlag = true;
                 return;
             } else {
-                x = ExpressionTree.parseStringToTree(expression.substring(expression.indexOf('\n') + 1)).evaluate();
-                expression = expression.substring(0, expression.indexOf('\n'));
+                x = ExpressionTree.parseStringToTree(parseAndAddSpace(expression.substring(expression.indexOf('\n') + 1))).evaluate();
+                expression = parseAndAddSpace(expression.substring(0, expression.indexOf('\n')));
                 tvDisplay.setText(expression);
                 currentExpression = expression;
                 evaluateFlag = false;
@@ -356,7 +357,6 @@ public class MainActivity extends Activity {
                 rstFlag = 1;
             } catch (NumberFormatException e) {
             }
-
         } else {
             new CountDownTimer(3000, 500) {
                 @Override
@@ -377,14 +377,7 @@ public class MainActivity extends Activity {
      * Transforms the current ExpressionTree into one representing its derivative
      */
     public void differentiate(View v) {
-        tvDisplay.setText(ExpressionTree.parseStringToTree(tvDisplay.getText().toString()).getDerivative().getSimplified().toString());
-        inputStack.push(tvDisplay.getText().length());
-        int max_lines = getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT
-                ? 4
-                : 2;
-        if (tvDisplay.getText().length() >= max_lines) {
-            tvDisplay.scrollTo(0, tvDisplay.getLineHeight() * (tvDisplay.getLineCount() - max_lines));
-        }
+        tvDisplay.setText(ExpressionTree.parseStringToTree(parseAndAddSpace(tvDisplay.getText().toString())).getDerivative().getSimplified().toString());
     }
 
     private static final int WINDOW_SCALE_HORIZONTAL = 6;
@@ -410,7 +403,7 @@ public class MainActivity extends Activity {
 
             float maxFunctionAbs = 1;
             float[] functionHeights = new float[tvDisplay.getWidth()];
-            ExpressionTree function = ExpressionTree.parseStringToTree(tvDisplay.getText().toString());
+            ExpressionTree function = ExpressionTree.parseStringToTree(parseAndAddSpace(tvDisplay.getText().toString()));
             for (int i = 0; i < tvDisplay.getWidth(); i++) {
                 functionHeights[i] = function.evaluate((float) ((i - (tvDisplay.getWidth() / 2.0)) * WINDOW_SCALE_HORIZONTAL / tvDisplay.getWidth()));
                 if (functionHeights[i] == Float.POSITIVE_INFINITY || functionHeights[i] == Float.NEGATIVE_INFINITY || Float.isNaN(functionHeights[i])) continue;
@@ -422,11 +415,6 @@ public class MainActivity extends Activity {
             for (int i=0; i<tvDisplay.getWidth(); i++) {
                 if (functionHeights[i] != Float.POSITIVE_INFINITY && functionHeights[i] != Float.NEGATIVE_INFINITY && !Float.isNaN(functionHeights[i])) {
                     int pixelHeight = (int) (0.5 * tvDisplay.getHeight() * (1 - functionHeights[i] / (maxFunctionAbs + 1)));
-                    if (i == (int)((tvDisplay.getWidth() / 2.0) - 5)) {
-                        int test = 0;
-                        test++;
-                        System.out.println("test");
-                    }
                     if (!previousExists) {
                         previousPixelHeight = pixelHeight;
                         previousExists = true;

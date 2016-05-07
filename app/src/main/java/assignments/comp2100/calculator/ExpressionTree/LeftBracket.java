@@ -52,5 +52,5 @@ public class LeftBracket extends UnaryOperator {
     }
 
     @Override
-    public String toString() { return "( " + operand.toString() + " )"; }
+    public String toString() { return "(" + operand.toString() + ")"; }
 }
