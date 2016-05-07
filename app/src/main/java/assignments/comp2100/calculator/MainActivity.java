@@ -7,12 +7,9 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.text.SpannableStringBuilder;
 import android.text.method.ScrollingMovementMethod;
-import android.text.style.ImageSpan;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -23,7 +20,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.Stack;
 
 import assignments.comp2100.calculator.ExpressionTree.ExpressionTree;
 
@@ -51,7 +47,6 @@ public class MainActivity extends Activity {
     boolean evaluateFlag = false;
     int rstFlag = 0;
     ArrayList<String> numInputs = new ArrayList<>();
-    Stack<Integer> inputStack;
     String currentExpression;
 
     @Override
@@ -66,6 +61,7 @@ public class MainActivity extends Activity {
         biSpaceInputs.add("+");
         biSpaceInputs.add("-");
         biSpaceInputs.add("%");
+        biSpaceInputs.add("^");
 
         rightSpaceInputs = new ArrayList<>();
         rightSpaceInputs.add("exp");
@@ -78,15 +74,6 @@ public class MainActivity extends Activity {
         rightSpaceInputs.add("cos");
         rightSpaceInputs.add("tan");
         rightSpaceInputs.add("log");
-
-        etEdit = (EditText) findViewById(R.id.editArea);
-        bVerify = (Button) findViewById(R.id.verifyBtn);
-        llButtonGrid = (LinearLayout) findViewById(R.id.buttonGrid);
-
-        // setup the textView
-        tvDisplay = (TextView) findViewById(R.id.displayArea);
-        tvDisplay.setMovementMethod(new ScrollingMovementMethod());
-        tvDisplay.setText("");
 
         numInputs.add("0");
         numInputs.add("1");
@@ -101,7 +88,14 @@ public class MainActivity extends Activity {
         numInputs.add(".");
         numInputs.add("x");
 
-        inputStack = new Stack<>();
+        etEdit = (EditText) findViewById(R.id.editArea);
+        bVerify = (Button) findViewById(R.id.verifyBtn);
+        llButtonGrid = (LinearLayout) findViewById(R.id.buttonGrid);
+
+        // setup the textView
+        tvDisplay = (TextView) findViewById(R.id.displayArea);
+        tvDisplay.setMovementMethod(new ScrollingMovementMethod());
+        tvDisplay.setText("");
 
         // input negative sign
         bMinus = (Button) findViewById(R.id.inSubtraction);
@@ -109,7 +103,6 @@ public class MainActivity extends Activity {
             @Override
             public boolean onLongClick(View v) {
                 tvDisplay.setText(tvDisplay.getText().toString() + "-");
-                inputStack.push(1);
                 return true;
             }
         });
@@ -161,7 +154,6 @@ public class MainActivity extends Activity {
         if (!(rstFlag == 1 && numInputs.contains(((Button) v).getText().toString()) )) {
             int pre_line_count = tvDisplay.getLineCount();
             tvDisplay.setText(tvDisplay.getText().toString() + ((Button) v).getText().toString());
-            inputStack.push( ((Button) v).getText().toString().length());
             rstFlag = 0;
             if (pre_line_count >= max_lines) {
                 tvDisplay.scrollTo(0, tvDisplay.getLineHeight() * (tvDisplay.getLineCount() - max_lines));
@@ -196,8 +188,7 @@ public class MainActivity extends Activity {
             if (rstFlag == 1){
                 tvDisplay.setText("");
             } else {
-                Integer lastLength = inputStack.pop();
-                tvDisplay.setText(tmp.substring(0, tmp.length() - lastLength));
+               tvDisplay.setText(tmp.substring(0,tmp.length() - 1));
             }
         }
 
@@ -218,27 +209,34 @@ public class MainActivity extends Activity {
         }
     }
 
-    public void parse(View v) {
-        String parsedExpression = addSpace(etEdit.getText().toString());
-        if (parsedExpression != null) {
+    /**
+     * This method is activated by the BACK button. It carries user input string back to the button mode.
+     * @param v
+     */
+    public void back(View v) {
             etEdit.setVisibility(View.GONE);
             bVerify.setVisibility(View.GONE);
             tvDisplay.setVisibility(View.VISIBLE);
             llButtonGrid.setVisibility(View.VISIBLE);
-            tvDisplay.setText(parsedExpression);
+            tvDisplay.setText(etEdit.getText().toString());
 
             InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(etEdit.getWindowToken(), 0);
-        }
     }
 
-    public String addSpace(String s) {
+    /**
+     * This method parses the input expression string and add proper spaces between symbols. If error detected, a toast showing the error message
+     * will be displayed on the screen.
+     * @param s
+     * @return A well-organized expression string waiting to be evaluated.
+     */
+    public String parseAndAddSpace(String s) {
         int index;
         String rst = "";
 
         for (index = 0; index < s.length();){
 
-            if (Character.isLetter(s.charAt(index))){
+            if (Character.isLetter(s.charAt(index)) && s.charAt(index) != 'x'){
                 int flag = 0;
                 for (String function : rightSpaceInputs) {
                     String head = (index + function.length() >= s.length())? s.substring(index) : s.substring(index,index+function.length());
@@ -326,7 +324,12 @@ public class MainActivity extends Activity {
      */
     public void evaluate(View v) {
         String expression = tvDisplay.getText().toString();
+        expression = parseAndAddSpace(expression);
         float x = 0;
+
+        if (expression == null || expression.equals("")){
+            return;
+        }
 
         if (funcFlag) {
             if (!evaluateFlag) { // The user entered a function, let them specify the value to evaluate at
@@ -351,9 +354,7 @@ public class MainActivity extends Activity {
             try {
                 tvDisplay.setText(String.valueOf(ExpressionTree.parseStringToTree(expression).evaluate(x)));
                 rstFlag = 1;
-                inputStack.empty();
             } catch (NumberFormatException e) {
-                // TODO display invalid number error message
             }
 
         } else {
