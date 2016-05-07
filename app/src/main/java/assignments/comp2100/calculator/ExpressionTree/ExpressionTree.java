@@ -55,7 +55,7 @@ public abstract class ExpressionTree {
         String[] splitInput = input.split(" ");
         boolean scalarIsNeeded = true;
         int bracketsNeeded = 0;
-        for (int i=0; i<splitInput.length; i++) {
+        for (int i=1; i<splitInput.length; i++) {
             if (splitInput[i].equals("")) return false;
             if (!tokenParser.containsKey(splitInput[i])) {
                 if (!scalarIsNeeded) {

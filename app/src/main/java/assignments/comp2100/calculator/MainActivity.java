@@ -377,6 +377,13 @@ public class MainActivity extends Activity {
      */
     public void differentiate(View v) {
         tvDisplay.setText(ExpressionTree.parseStringToTree(tvDisplay.getText().toString()).getDerivative().getSimplified().toString());
+        inputStack.push(tvDisplay.getText().length());
+        int max_lines = getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT
+                ? 4
+                : 2;
+        if (tvDisplay.getText().length() >= max_lines) {
+            tvDisplay.scrollTo(0, tvDisplay.getLineHeight() * (tvDisplay.getLineCount() - max_lines));
+        }
     }
 
     private static final int WINDOW_SCALE_HORIZONTAL = 6;
@@ -402,8 +409,9 @@ public class MainActivity extends Activity {
 
             float maxFunctionAbs = 1;
             float[] functionHeights = new float[tvDisplay.getWidth()];
+            ExpressionTree function = ExpressionTree.parseStringToTree(tvDisplay.getText().toString());
             for (int i = 0; i < tvDisplay.getWidth(); i++) {
-                functionHeights[i] = ExpressionTree.parseStringToTree(tvDisplay.getText().toString()).evaluate((float) ((i - (tvDisplay.getWidth() / 2.0)) * WINDOW_SCALE_HORIZONTAL / tvDisplay.getWidth()));
+                functionHeights[i] = function.evaluate((float) ((i - (tvDisplay.getWidth() / 2.0)) * WINDOW_SCALE_HORIZONTAL / tvDisplay.getWidth()));
                 if (functionHeights[i] == Float.POSITIVE_INFINITY || functionHeights[i] == Float.NEGATIVE_INFINITY || Float.isNaN(functionHeights[i])) continue;
                 maxFunctionAbs = Math.abs(functionHeights[i]) > maxFunctionAbs ? Math.abs(functionHeights[i]) : maxFunctionAbs;
             }

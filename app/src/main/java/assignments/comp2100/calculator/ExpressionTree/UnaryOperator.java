@@ -21,6 +21,8 @@ public class UnaryOperator extends ExpressionTree {
             derivativeMap.put("sin", UnaryOperator.class.getDeclaredMethod("dSin"));
             derivativeMap.put("cos", UnaryOperator.class.getDeclaredMethod("dCos"));
             derivativeMap.put("tan", UnaryOperator.class.getDeclaredMethod("dTan"));
+            derivativeMap.put("sqrt", UnaryOperator.class.getDeclaredMethod("dSqrt"));
+            derivativeMap.put("abs", UnaryOperator.class.getDeclaredMethod("dAbs"));
         } catch (Exception e) {
             System.err.println("could not initialize unary derivativeMap");
         }
@@ -68,6 +70,15 @@ public class UnaryOperator extends ExpressionTree {
         sec_2.insertExpression(new Scalar(1));
         sec_2.insertExpression(cos_2);
         return sec_2;
+    }
+    ExpressionTree dSqrt() {
+        BinaryOperator inverse = new BinaryOperator(ExpressionTree.tokenParser.get("/"));
+        inverse.insertExpression(new Scalar(0.5f));
+        inverse.insertExpression(getClone());
+        return inverse;
+    }
+    ExpressionTree dAbs() {
+        return operand.getDerivative();
     }
 
     @Override
