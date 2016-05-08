@@ -353,7 +353,7 @@ public class MainActivity extends Activity {
         if (ExpressionTree.checkInput(expression)) {
             tvDisplay.scrollTo(0,0);
             try {
-                tvDisplay.setText(String.valueOf(ExpressionTree.parseStringToTree(expression).evaluate(x)));
+                tvDisplay.setText(String.valueOf(ExpressionTree.parseStringToTree(parseAndAddSpace(expression)).evaluate(x)));
                 rstFlag = 1;
             } catch (NumberFormatException e) {
             }
