@@ -412,12 +412,12 @@ public class MainActivity extends Activity {
                 evaluateFlag = true;
                 return;
             } else {
-                if (expression.substring(expression.indexOf('\n') + 1).contains("x")) {
+                ExpressionTree evaluatePoint = parseExpression(expression.substring(expression.indexOf('\n') + 1));
+                if (evaluatePoint == null) return;
+                if (evaluatePoint.isFunction()) {
                     Toast.makeText(this, "Point to evaluate at must be constant", Toast.LENGTH_LONG).show();
                     return;
                 }
-                ExpressionTree evaluatePoint = parseExpression(expression.substring(expression.indexOf('\n') + 1));
-                if (evaluatePoint == null) return;
 
                 x = evaluatePoint.evaluate();
                 expression = (String) parseAndAddSpace(expression.substring(0, expression.indexOf('\n'))).get("str");

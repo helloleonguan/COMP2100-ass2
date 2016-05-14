@@ -11,6 +11,9 @@ public class Variable extends Scalar {
     public ExpressionTree getClone() { return new Variable(); }
 
     @Override
+    public boolean isFunction() {return true; }
+
+    @Override
     public float evaluate(float x) {
         return x;
     }

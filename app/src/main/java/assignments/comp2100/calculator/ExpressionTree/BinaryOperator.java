@@ -214,6 +214,9 @@ public class BinaryOperator extends ExpressionTree {
     }
 
     @Override
+    public boolean isFunction() { return left.isFunction() || right.isFunction(); }
+
+    @Override
     public float evaluate() {
         try {
             try {

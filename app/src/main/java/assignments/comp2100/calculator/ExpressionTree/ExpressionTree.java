@@ -89,6 +89,8 @@ public abstract class ExpressionTree {
         return bracketsNeeded == 0 && !scalarIsNeeded;
     }
 
+    public boolean isFunction() { return false; }
+
     /**
      * Converts a String into an equivalent ExpressionTree
      * @param expr arithmetic expression in String form, assumed to be valid

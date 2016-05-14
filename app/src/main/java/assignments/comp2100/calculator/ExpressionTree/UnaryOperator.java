@@ -126,6 +126,9 @@ public class UnaryOperator extends ExpressionTree {
     }
 
     @Override
+    public boolean isFunction() { return operand.isFunction(); }
+
+    @Override
     public float evaluate() {
         try {
             try {
