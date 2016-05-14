@@ -357,7 +357,24 @@ public class MainActivity extends Activity {
             case 3:
                 Toast.makeText(this, "Invalid character detected!", Toast.LENGTH_LONG).show();
                 break;
+            case 4:
+                Toast.makeText(this, "Invalid expression, unmatched brackets or operators", Toast.LENGTH_LONG).show();
+                break;
         }
+    }
+
+    private ExpressionTree parseExpression(String expr) {
+        HashMap parseResult = parseAndAddSpace(expr);
+        int error = (int) parseResult.get("error");
+        if (error != 0 || expr.equals("")) {
+            alertError(error);
+            return null;
+        }
+        if (!ExpressionTree.checkInput(expr)) {
+            alertError(4);
+            return null;
+        }
+        return ExpressionTree.parseStringToTree((String)parseResult.get("str"));
     }
 
     /**
@@ -393,7 +410,14 @@ public class MainActivity extends Activity {
                 evaluateFlag = true;
                 return;
             } else {
-                x = ExpressionTree.parseStringToTree((String) parseAndAddSpace(expression.substring(expression.indexOf('\n') + 1)).get("str")).evaluate();
+                if (expression.substring(expression.indexOf('\n') + 1).contains("x")) {
+                    Toast.makeText(this, "Point to evaluate at must be constant", Toast.LENGTH_LONG).show();
+                    return;
+                }
+                ExpressionTree evaluatePoint = parseExpression(expression.substring(expression.indexOf('\n') + 1));
+                if (evaluatePoint == null) return;
+
+                x = evaluatePoint.evaluate();
                 expression = (String) parseAndAddSpace(expression.substring(0, expression.indexOf('\n'))).get("str");
                 //tvDisplay.setText(expression);
                 currentExpression = expression;
@@ -429,7 +453,13 @@ public class MainActivity extends Activity {
      * Transforms the current ExpressionTree into one representing its derivative
      */
     public void differentiate(View v) {
-        tvDisplay.setText(ExpressionTree.parseStringToTree((String) parseAndAddSpace(tvDisplay.getText().toString()).get("str")).getDerivative().getSimplified().toString());
+        if (funcFlag) {
+            return;
+        }
+        ExpressionTree function = parseExpression(tvDisplay.getText().toString());
+        if (function != null) {
+            tvDisplay.setText(function.getDerivative().getSimplified().toString());
+        }
     }
 
     private static final int WINDOW_SCALE_HORIZONTAL = 6;
@@ -440,6 +470,9 @@ public class MainActivity extends Activity {
      * Plots a graph of the current ExpressionTree over the display
      */
     public void drawFunction(View v) {
+        ExpressionTree function = parseExpression(tvDisplay.getText().toString());
+        if (function == null) return;
+
         graphFlag = !graphFlag;
 
         ((ImageView)findViewById(R.id.graphic_display)).setImageResource(0);
@@ -455,7 +488,6 @@ public class MainActivity extends Activity {
 
             float maxFunctionAbs = 1;
             float[] functionHeights = new float[tvDisplay.getWidth()];
-            ExpressionTree function = ExpressionTree.parseStringToTree((String) parseAndAddSpace(tvDisplay.getText().toString()).get("str"));
             for (int i = 0; i < tvDisplay.getWidth(); i++) {
                 functionHeights[i] = function.evaluate((float) ((i - (tvDisplay.getWidth() / 2.0)) * WINDOW_SCALE_HORIZONTAL / tvDisplay.getWidth()));
                 if (functionHeights[i] == Float.POSITIVE_INFINITY || functionHeights[i] == Float.NEGATIVE_INFINITY || Float.isNaN(functionHeights[i])) continue;
