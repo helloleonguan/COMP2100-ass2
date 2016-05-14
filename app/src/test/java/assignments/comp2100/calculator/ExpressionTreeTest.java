@@ -94,16 +94,14 @@ public class ExpressionTreeTest {
     }
 
     private static final String[] testsIC = {
-            "+ +",
-            "1 1",
-            "( )",
-            "1 + ( 2 + 2 ) )",
-            "1 + 2",
-            "1 * ( 2 * 3 )"
+            "++",
+            "()",
+            "1+(2+2))",
+            "1+2",
+            "1*(2*3)"
     };
 
     private static final boolean[] ansIC = {
-            false,
             false,
             false,
             false,
@@ -114,7 +112,7 @@ public class ExpressionTreeTest {
     @Test
     public void cleanInputTest() throws Exception {
         for (int i=0; i<testsIC.length; i++) {
-            assertEquals("testIC " + i + " failed", ansIC[i], ExpressionTree.checkInput(testsIC[i]));
+            assertEquals("testIC " + i + " failed", ansIC[i], ExpressionTree.checkInput((String)MainActivity.parseAndAddSpace(testsIC[i]).get("str")));
         }
     }
 
