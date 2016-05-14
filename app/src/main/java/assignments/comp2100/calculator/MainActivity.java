@@ -9,6 +9,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.text.method.MovementMethod;
 import android.text.method.ScrollingMovementMethod;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -20,6 +21,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Set;
 
 import assignments.comp2100.calculator.ExpressionTree.ExpressionTree;
 
@@ -37,9 +40,6 @@ public class MainActivity extends Activity {
 
     Button bMinus;
 
-    //input operations databases
-    ArrayList<String> biSpaceInputs;
-    ArrayList<String> rightSpaceInputs;
 
     //Variables
     boolean graphFlag = false;
@@ -48,32 +48,12 @@ public class MainActivity extends Activity {
     int rstFlag = 0;
     ArrayList<String> numInputs = new ArrayList<>();
     String currentExpression;
+    MovementMethod scrollingMethod;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        // initialize input databases
-        biSpaceInputs = new ArrayList<>();
-        biSpaceInputs.add("*");
-        biSpaceInputs.add("/");
-        biSpaceInputs.add("+");
-        biSpaceInputs.add("-");
-        biSpaceInputs.add("%");
-        biSpaceInputs.add("^");
-
-        rightSpaceInputs = new ArrayList<>();
-        rightSpaceInputs.add("exp");
-        rightSpaceInputs.add("sqrt");
-        rightSpaceInputs.add("abs");
-        rightSpaceInputs.add("sinh");
-        rightSpaceInputs.add("cosh");
-        rightSpaceInputs.add("tanh");
-        rightSpaceInputs.add("sin");
-        rightSpaceInputs.add("cos");
-        rightSpaceInputs.add("tan");
-        rightSpaceInputs.add("log");
 
         numInputs.add("0");
         numInputs.add("1");
@@ -86,7 +66,6 @@ public class MainActivity extends Activity {
         numInputs.add("8");
         numInputs.add("9");
         numInputs.add(".");
-        numInputs.add("x");
 
         etEdit = (EditText) findViewById(R.id.editArea);
         bVerify = (Button) findViewById(R.id.verifyBtn);
@@ -94,7 +73,9 @@ public class MainActivity extends Activity {
 
         // setup the textView
         tvDisplay = (TextView) findViewById(R.id.displayArea);
-        tvDisplay.setMovementMethod(new ScrollingMovementMethod());
+        scrollingMethod = new ScrollingMovementMethod();
+        tvDisplay.setMovementMethod(scrollingMethod);
+
         tvDisplay.setText("");
 
         // input negative sign
@@ -230,9 +211,47 @@ public class MainActivity extends Activity {
      * @param s
      * @return A well-organized expression string waiting to be evaluated.
      */
-    public String parseAndAddSpace(String s) {
+    public static HashMap parseAndAddSpace(String s) {
         int index;
+        HashMap<String, Object> returnValues = new HashMap<>();
         String rst = "";
+        int errorType = 0; // 0 - no error, 1 - function typo, 2 - Multiple floating points, 3 - invalid character
+
+        //input operations databases
+        ArrayList<String> biSpaceInputs = new ArrayList<>();
+        ArrayList<String> rightSpaceInputs = new ArrayList<>();
+        ArrayList<String> numInputs = new ArrayList<>();
+
+        biSpaceInputs.add("*");
+        biSpaceInputs.add("/");
+        biSpaceInputs.add("+");
+        biSpaceInputs.add("-");
+        biSpaceInputs.add("%");
+        biSpaceInputs.add("^");
+
+        rightSpaceInputs.add("exp");
+        rightSpaceInputs.add("sqrt");
+        rightSpaceInputs.add("abs");
+        rightSpaceInputs.add("sinh");
+        rightSpaceInputs.add("cosh");
+        rightSpaceInputs.add("tanh");
+        rightSpaceInputs.add("sin");
+        rightSpaceInputs.add("cos");
+        rightSpaceInputs.add("tan");
+        rightSpaceInputs.add("log");
+
+        numInputs.add("0");
+        numInputs.add("1");
+        numInputs.add("2");
+        numInputs.add("3");
+        numInputs.add("4");
+        numInputs.add("5");
+        numInputs.add("6");
+        numInputs.add("7");
+        numInputs.add("8");
+        numInputs.add("9");
+        numInputs.add(".");
+        numInputs.add("x");
 
         for (index = 0; index < s.length();){
             if (s.charAt(index) == 'x') {
@@ -251,7 +270,8 @@ public class MainActivity extends Activity {
                 }
 
                 if (flag == 0){
-                    Toast.makeText(this, "Function name typo!", Toast.LENGTH_LONG).show();
+                    //Toast.makeText(this, "Function name typo!", Toast.LENGTH_LONG).show();
+                    errorType = 1;
                     rst = null;
                     break;
                 }
@@ -272,7 +292,8 @@ public class MainActivity extends Activity {
                 }
 
                 if (point >= 2) {
-                    Toast.makeText(this, "Multiple floating points!", Toast.LENGTH_LONG).show();
+                    //Toast.makeText(this, "Multiple floating points!", Toast.LENGTH_LONG).show();
+                    errorType = 2;
                     rst = null;
                     break;
                 } else {
@@ -309,13 +330,34 @@ public class MainActivity extends Activity {
             } else if (s.charAt(index) == ' '){
                 index++;
             } else {
-                Toast.makeText(this, "Invalid character detected!", Toast.LENGTH_LONG).show();
+                //Toast.makeText(this, "Invalid character detected!", Toast.LENGTH_LONG).show();
+                errorType = 3;
                 rst = null;
                 break;
             }
 
         }
-        return rst;
+        returnValues.put("str", rst);
+        returnValues.put("error", errorType);
+        return returnValues;
+    }
+
+    /**
+     * This method handles the toasts associated with the error detected in the parse method.
+     * @param error an int indicating the type o error detected in the parse method.
+     */
+    public void alertError(int error) {
+        switch(error) {
+            case 1:
+                Toast.makeText(this, "Function name typo!", Toast.LENGTH_LONG).show();
+                break;
+            case 2:
+                Toast.makeText(this, "Multiple floating points!", Toast.LENGTH_LONG).show();
+                break;
+            case 3:
+                Toast.makeText(this, "Invalid character detected!", Toast.LENGTH_LONG).show();
+                break;
+        }
     }
 
     /**
@@ -328,7 +370,16 @@ public class MainActivity extends Activity {
         String expression = tvDisplay.getText().toString();
         float x = 0;
 
-        if (expression == null || expression.equals("")){
+        int error;
+        int lineIndex = expression.indexOf('\n');
+        if (lineIndex == -1) {
+            error = (int) parseAndAddSpace(expression).get("error");
+        } else {
+            error = (int) parseAndAddSpace(expression.substring(0,lineIndex)).get("error");
+        }
+
+        if ( error != 0 || expression.equals("")){
+            alertError(error);
             return;
         }
 
@@ -342,9 +393,9 @@ public class MainActivity extends Activity {
                 evaluateFlag = true;
                 return;
             } else {
-                x = ExpressionTree.parseStringToTree(parseAndAddSpace(expression.substring(expression.indexOf('\n') + 1))).evaluate();
-                expression = parseAndAddSpace(expression.substring(0, expression.indexOf('\n')));
-                tvDisplay.setText(expression);
+                x = ExpressionTree.parseStringToTree((String) parseAndAddSpace(expression.substring(expression.indexOf('\n') + 1)).get("str")).evaluate();
+                expression = (String) parseAndAddSpace(expression.substring(0, expression.indexOf('\n'))).get("str");
+                //tvDisplay.setText(expression);
                 currentExpression = expression;
                 evaluateFlag = false;
             }
@@ -353,9 +404,10 @@ public class MainActivity extends Activity {
         if (ExpressionTree.checkInput(expression)) {
             tvDisplay.scrollTo(0,0);
             try {
-                tvDisplay.setText(String.valueOf(ExpressionTree.parseStringToTree(parseAndAddSpace(expression)).evaluate(x)));
+                tvDisplay.setText(String.valueOf(ExpressionTree.parseStringToTree((String) parseAndAddSpace(expression).get("str")).evaluate(x)));
                 rstFlag = 1;
             } catch (NumberFormatException e) {
+
             }
         } else {
             new CountDownTimer(3000, 500) {
@@ -377,7 +429,7 @@ public class MainActivity extends Activity {
      * Transforms the current ExpressionTree into one representing its derivative
      */
     public void differentiate(View v) {
-        tvDisplay.setText(ExpressionTree.parseStringToTree(parseAndAddSpace(tvDisplay.getText().toString())).getDerivative().getSimplified().toString());
+        tvDisplay.setText(ExpressionTree.parseStringToTree((String) parseAndAddSpace(tvDisplay.getText().toString()).get("str")).getDerivative().getSimplified().toString());
     }
 
     private static final int WINDOW_SCALE_HORIZONTAL = 6;
@@ -403,7 +455,7 @@ public class MainActivity extends Activity {
 
             float maxFunctionAbs = 1;
             float[] functionHeights = new float[tvDisplay.getWidth()];
-            ExpressionTree function = ExpressionTree.parseStringToTree(parseAndAddSpace(tvDisplay.getText().toString()));
+            ExpressionTree function = ExpressionTree.parseStringToTree((String) parseAndAddSpace(tvDisplay.getText().toString()).get("str"));
             for (int i = 0; i < tvDisplay.getWidth(); i++) {
                 functionHeights[i] = function.evaluate((float) ((i - (tvDisplay.getWidth() / 2.0)) * WINDOW_SCALE_HORIZONTAL / tvDisplay.getWidth()));
                 if (functionHeights[i] == Float.POSITIVE_INFINITY || functionHeights[i] == Float.NEGATIVE_INFINITY || Float.isNaN(functionHeights[i])) continue;

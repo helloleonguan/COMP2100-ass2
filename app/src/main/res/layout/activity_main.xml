@@ -45,8 +45,8 @@
         android:layout_weight="1"
         android:visibility="gone"
         android:background="@drawable/action_button_bg"
-        android:text="PARSE"
-        android:onClick="parse"
+        android:text="BACK"
+        android:onClick="back"
         />
 
     <!--   Button Section   -->
