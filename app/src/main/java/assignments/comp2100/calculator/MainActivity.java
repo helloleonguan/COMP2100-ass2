@@ -374,8 +374,10 @@ public class MainActivity extends Activity {
         int lineIndex = expression.indexOf('\n');
         if (lineIndex == -1) {
             error = (int) parseAndAddSpace(expression).get("error");
+            currentExpression = (String) parseAndAddSpace(expression).get("str");
         } else {
             error = (int) parseAndAddSpace(expression.substring(0,lineIndex)).get("error");
+            currentExpression = (String) parseAndAddSpace(expression).get("str");
         }
 
         if ( error != 0 || expression.equals("")){
@@ -399,6 +401,8 @@ public class MainActivity extends Activity {
                 currentExpression = expression;
                 evaluateFlag = false;
             }
+        } else {
+            expression = currentExpression;
         }
 
         if (ExpressionTree.checkInput(expression)) {
