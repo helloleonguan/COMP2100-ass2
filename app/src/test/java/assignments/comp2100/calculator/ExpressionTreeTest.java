@@ -118,6 +118,7 @@ public class ExpressionTreeTest {
 
     private static final String[] testsDX = {
             "2 * x",
+            "1 / x",
             "x * x",
             "exp x",
             "log x",
@@ -128,10 +129,23 @@ public class ExpressionTreeTest {
             "2 ^ x"
     };
 
+    private static final String[] ansDX = {
+            "2.0",
+            "(1.0/(x*x))",
+            "(x+x)",
+            "expx",
+            "(1.0/x)",
+            "((-1.0*sinx)*expcosx)",
+            "(((-1.0*sinx)*tanx)+(cosx*(1.0/(cosx*cosx))))",
+            "((x^2.0)*3.0)",
+            "((x^(x-1.0))*(x+(x*logx)))",
+            "((2.0^(x-1.0))*1.3862944)"
+    };
+
     @Test
     public void differentiationTest() throws Exception {
         for (int i=0; i<testsDX.length; i++) {
-            System.out.println(ExpressionTree.parseStringToTree(testsDX[i]).getDerivative().getSimplified().toString());
+            assertEquals("testDX " + i + " failed", ansDX[i], ExpressionTree.parseStringToTree(testsDX[i]).getDerivative().getSimplified().toString());
         }
     }
 }

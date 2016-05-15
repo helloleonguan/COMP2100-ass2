@@ -4,6 +4,8 @@ import java.util.HashMap;
 
 /**
  * Created by Nathan F. Elazar on 23/04/2016.
+ *
+ * List of functions used in the UnaryOperator and BinaryOperator classes
  */
 public abstract class OperationDatabase {
     static float add(float x, float y) { return x + y; }
@@ -24,7 +26,7 @@ public abstract class OperationDatabase {
     static HashMap<String, String> reverseTokenizer = new HashMap<>();
     static {
         try {
-            reverseTokenizer.put("add", " + ");
+            reverseTokenizer.put("add", "+");
             reverseTokenizer.put("sub", "-");
             reverseTokenizer.put("mult", "*");
             reverseTokenizer.put("mod", "%");

@@ -7,17 +7,16 @@ import java.util.HashMap;
 /**
  * Created by Nathan F. Elazar on 31/03/2016.
  *
- * Tree style recursive data structure, equipped
- * with methods for incrementally constructing
- * trees from Strings, and evaluating expressions
+ * Tree style recursive data structure for representing
+ * arithmetic expressions, equipped with methods for
+ * incrementally constructing trees from Strings, and evaluating expressions
  */
 public abstract class ExpressionTree {
     static final float DELTA = 0.00001f;
 
-    public static class Operation {
+    static class Operation {
         Method operation;
         int precedence;
-
         Operation(Method operation, int precedence) {
             this.operation = operation;
             this.precedence = precedence;
@@ -26,6 +25,7 @@ public abstract class ExpressionTree {
 
     protected ExpressionTree parent;
     protected int precedence;
+
     static HashMap<String, Operation> tokenParser = new HashMap<>();
     static {
         try {
@@ -39,19 +39,23 @@ public abstract class ExpressionTree {
             tokenParser.put("/", new Operation(OperationDatabase.class.getDeclaredMethod("div", bArgs), 2));
             tokenParser.put("(", new Operation(OperationDatabase.class.getDeclaredMethod("identity", uArg), 0));
             tokenParser.put(")", new Operation(OperationDatabase.class.getDeclaredMethod("identity", uArg), 0));
-            tokenParser.put("cos", new Operation(OperationDatabase.class.getDeclaredMethod("cos", uArg), Integer.MAX_VALUE));
-            tokenParser.put("sin", new Operation(OperationDatabase.class.getDeclaredMethod("sin", uArg), Integer.MAX_VALUE));
-            tokenParser.put("tan", new Operation(OperationDatabase.class.getDeclaredMethod("tan", uArg), Integer.MAX_VALUE));
-            tokenParser.put("sqrt", new Operation(OperationDatabase.class.getDeclaredMethod("sqrt", uArg), Integer.MAX_VALUE));
-            tokenParser.put("abs", new Operation(OperationDatabase.class.getDeclaredMethod("abs", uArg), Integer.MAX_VALUE));
-            tokenParser.put("exp", new Operation(OperationDatabase.class.getDeclaredMethod("exp", uArg), Integer.MAX_VALUE));
-            tokenParser.put("log", new Operation(OperationDatabase.class.getDeclaredMethod("log", uArg), Integer.MAX_VALUE));
+            tokenParser.put("cos", new Operation(OperationDatabase.class.getDeclaredMethod("cos", uArg), UnaryOperator.UNARY_PRECEDENCE));
+            tokenParser.put("sin", new Operation(OperationDatabase.class.getDeclaredMethod("sin", uArg), UnaryOperator.UNARY_PRECEDENCE));
+            tokenParser.put("tan", new Operation(OperationDatabase.class.getDeclaredMethod("tan", uArg), UnaryOperator.UNARY_PRECEDENCE));
+            tokenParser.put("sqrt", new Operation(OperationDatabase.class.getDeclaredMethod("sqrt", uArg), UnaryOperator.UNARY_PRECEDENCE));
+            tokenParser.put("abs", new Operation(OperationDatabase.class.getDeclaredMethod("abs", uArg), UnaryOperator.UNARY_PRECEDENCE));
+            tokenParser.put("exp", new Operation(OperationDatabase.class.getDeclaredMethod("exp", uArg), UnaryOperator.UNARY_PRECEDENCE));
+            tokenParser.put("log", new Operation(OperationDatabase.class.getDeclaredMethod("log", uArg), UnaryOperator.UNARY_PRECEDENCE));
         } catch (Exception e) {
             System.err.println("Could not initialize tokenParser");
         }
     }
 
-    public static boolean checkInput(String input) throws IllegalArgumentException {
+    /**
+     * @param input a well-formatted expression, in String form
+     * @return true iff the expression is valid (matching brackets, each operator has the correct number of operands)
+     */
+    public static boolean checkInput(String input) {
         String[] splitInput = input.split(" ");
         boolean scalarIsNeeded = true;
         int bracketsNeeded = 0;
@@ -74,25 +78,24 @@ public abstract class ExpressionTree {
                 }
                 bracketsNeeded--;
             } else {
-                try {
-                    if (tokenParser.get(splitInput[i]).operation.getParameterTypes().length == 2) {
-                        if (scalarIsNeeded) {
-                            return false;
-                        }
-                        scalarIsNeeded = true;
+                if (tokenParser.get(splitInput[i]).operation.getParameterTypes().length == 2) {
+                    if (scalarIsNeeded) {
+                        return false;
                     }
-                } catch (Exception e) {
-                    throw new IllegalArgumentException();
+                    scalarIsNeeded = true;
                 }
             }
         }
         return bracketsNeeded == 0 && !scalarIsNeeded;
     }
 
+    /**
+     * @return true iff this tree contains any Variable nodes
+     */
     public boolean isFunction() { return false; }
 
     /**
-     * Converts a String into an equivalent ExpressionTree
+     * Converts a well-formatted String into an equivalent ExpressionTree
      * @param expr arithmetic expression in String form, assumed to be valid
      * @return ExpressionTree that will evaluate expr
      */
@@ -106,11 +109,11 @@ public abstract class ExpressionTree {
     }
 
     /**
-     * Converts a character into a single ExpressionTree
+     * Converts a character into a single ExpressionTree node
      * @param token a single token, in String form
      * @return an ExpressionTree with no parents/children
      */
-    public static ExpressionTree parseStringToToken(String token) {
+    static ExpressionTree parseStringToToken(String token) {
         if (token.equals("(")) {
             return new LeftBracket();
         } else if (token.equals(")")) {
@@ -152,6 +155,10 @@ public abstract class ExpressionTree {
     public abstract float evaluate();
     public float evaluate(float x) { return evaluate(); }
     public abstract ExpressionTree getDerivative();
+
+    /**
+     * @return A simplified version of the expression tree, where redundant nodes have been removed
+     */
     public abstract ExpressionTree getSimplified();
     abstract int getPrecedence();
     abstract ExpressionTree getClone();

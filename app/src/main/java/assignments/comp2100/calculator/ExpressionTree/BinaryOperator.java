@@ -34,95 +34,6 @@ public class BinaryOperator extends ExpressionTree {
         this.precedence = op.precedence;
     }
 
-    BinaryOperator(BinaryOperator other) {
-        this.operation = other.getOperation();
-        this.precedence = other.getPrecedence();
-    }
-
-    //Derivatives
-    ExpressionTree additionRule() {
-        BinaryOperator middle = new BinaryOperator(new Operation(operation, precedence));
-        middle.insertExpression(left.getDerivative());
-        middle.insertExpression(right.getDerivative());
-
-        return middle;
-    }
-
-    ExpressionTree productRule() {
-        BinaryOperator middle = new BinaryOperator(ExpressionTree.tokenParser.get("+"));
-        BinaryOperator left = new BinaryOperator(ExpressionTree.tokenParser.get("*"));
-        BinaryOperator right = new BinaryOperator(ExpressionTree.tokenParser.get("*"));
-
-        left.insertExpression(this.left.getDerivative());
-        left.insertExpression(this.right.getClone());
-
-        right.insertExpression(this.left.getClone());
-        right.insertExpression(this.right.getDerivative());
-
-        middle.insertExpression(left);
-        middle.insertExpression(right);
-
-        return middle;
-    }
-
-    ExpressionTree quotientRule() {
-        BinaryOperator middle = new BinaryOperator(ExpressionTree.tokenParser.get("-"));
-        BinaryOperator left = new BinaryOperator(ExpressionTree.tokenParser.get("*"));
-        BinaryOperator right = new BinaryOperator(ExpressionTree.tokenParser.get("*"));
-        BinaryOperator quotient = new BinaryOperator(ExpressionTree.tokenParser.get("*"));
-        BinaryOperator division = new BinaryOperator(ExpressionTree.tokenParser.get("/"));
-
-        left.insertExpression(this.left.getDerivative());
-        left.insertExpression(this.right);
-
-        right.insertExpression(this.left);
-        right.insertExpression(this.right.getDerivative());
-
-        middle.insertExpression(left);
-        middle.insertExpression(right);
-
-        quotient.insertExpression(new BinaryOperator(right));
-        quotient.insertExpression(new BinaryOperator(right));
-
-        division.insertExpression(middle);
-        division.insertExpression(quotient);
-
-        return division;
-    }
-    ExpressionTree moduloRule() {
-        return left.getDerivative();
-    }
-    ExpressionTree powerRule() {
-        //d/dx(f(x)^(g(x))) = f(x)^(g(x)-1) (g(x) f'(x)+f(x) log(f(x)) g'(x))
-        ExpressionTree middle = new BinaryOperator(ExpressionTree.tokenParser.get("*"));
-        ExpressionTree left = new BinaryOperator(ExpressionTree.tokenParser.get("^"));
-        ExpressionTree right = new BinaryOperator(ExpressionTree.tokenParser.get("+"));
-
-        ExpressionTree gxm1 = new BinaryOperator(ExpressionTree.tokenParser.get("-"));
-        left.insertExpression(this.left.getClone());
-        gxm1.insertExpression(this.right.getClone());
-        gxm1.insertExpression(new Scalar(1));
-        left.insertExpression(gxm1);
-
-        ExpressionTree gxdfx = new BinaryOperator(ExpressionTree.tokenParser.get("*"));
-        gxdfx.insertExpression(this.right.getClone());
-        gxdfx.insertExpression(this.left.getDerivative());
-        right.insertExpression(gxdfx);
-        ExpressionTree logfx = new UnaryOperator(ExpressionTree.tokenParser.get("log"));
-        logfx.insertExpression(this.left.getClone());
-        ExpressionTree fxlogfx = new BinaryOperator(ExpressionTree.tokenParser.get("*"));
-        fxlogfx.insertExpression(this.left.getClone());
-        fxlogfx.insertExpression(logfx);
-        ExpressionTree fxlogfxdgx = new BinaryOperator(ExpressionTree.tokenParser.get("*"));
-        fxlogfxdgx.insertExpression(fxlogfx);
-        fxlogfxdgx.insertExpression(this.right.getDerivative());
-        right.insertExpression(fxlogfxdgx);
-
-        middle.insertExpression(left);
-        middle.insertExpression(right);
-        return middle;
-    }
-
     /**
      * Given a new expression, this method inserts it
      * into either this binary operators left or right
@@ -260,5 +171,89 @@ public class BinaryOperator extends ExpressionTree {
         return "(" + left.toString() + OperationDatabase.reverseTokenizer.get(operation.getName()) + right.toString() + ")";
     }
 
-    Method getOperation() { return operation; }
+    //Derivatives
+    // d/dx f(x) + g(x) = f'(x) + g'(x)
+    ExpressionTree additionRule() {
+        BinaryOperator middle = new BinaryOperator(new Operation(operation, precedence));
+        middle.insertExpression(left.getDerivative());
+        middle.insertExpression(right.getDerivative());
+
+        return middle;
+    }
+    // d/dx f(x)g(x) = f(x)g'(x) + g(x)f'(x)
+    ExpressionTree productRule() {
+        BinaryOperator middle = new BinaryOperator(ExpressionTree.tokenParser.get("+"));
+        BinaryOperator left = new BinaryOperator(ExpressionTree.tokenParser.get("*"));
+        BinaryOperator right = new BinaryOperator(ExpressionTree.tokenParser.get("*"));
+
+        left.insertExpression(this.left.getDerivative());
+        left.insertExpression(this.right.getClone());
+
+        right.insertExpression(this.left.getClone());
+        right.insertExpression(this.right.getDerivative());
+
+        middle.insertExpression(left);
+        middle.insertExpression(right);
+
+        return middle;
+    }
+    // d/dx f(x)/g(x) = (f'(x)g(x) - g'(x)f(x))/g^2(x)
+    ExpressionTree quotientRule() {
+        BinaryOperator middle = new BinaryOperator(ExpressionTree.tokenParser.get("-"));
+        BinaryOperator left = new BinaryOperator(ExpressionTree.tokenParser.get("*"));
+        BinaryOperator right = new BinaryOperator(ExpressionTree.tokenParser.get("*"));
+        BinaryOperator quotient = new BinaryOperator(ExpressionTree.tokenParser.get("*"));
+        BinaryOperator division = new BinaryOperator(ExpressionTree.tokenParser.get("/"));
+
+        left.insertExpression(this.left.getDerivative());
+        left.insertExpression(this.right);
+
+        right.insertExpression(this.left);
+        right.insertExpression(this.right.getDerivative());
+
+        middle.insertExpression(left);
+        middle.insertExpression(right);
+
+        quotient.insertExpression(this.right.getClone());
+        quotient.insertExpression(this.right.getClone());
+
+        division.insertExpression(middle);
+        division.insertExpression(quotient);
+
+        return division;
+    }
+    // d/dx f(x) % g(x) = f'(x)
+    ExpressionTree moduloRule() {
+        return left.getDerivative();
+    }
+    //d/dx(f(x)^(g(x))) = f(x)^(g(x)-1) (g(x) f'(x)+f(x) log(f(x)) g'(x))
+    ExpressionTree powerRule() {
+        ExpressionTree middle = new BinaryOperator(ExpressionTree.tokenParser.get("*"));
+        ExpressionTree left = new BinaryOperator(ExpressionTree.tokenParser.get("^"));
+        ExpressionTree right = new BinaryOperator(ExpressionTree.tokenParser.get("+"));
+
+        ExpressionTree gxm1 = new BinaryOperator(ExpressionTree.tokenParser.get("-"));
+        left.insertExpression(this.left.getClone());
+        gxm1.insertExpression(this.right.getClone());
+        gxm1.insertExpression(new Scalar(1));
+        left.insertExpression(gxm1);
+
+        ExpressionTree gxdfx = new BinaryOperator(ExpressionTree.tokenParser.get("*"));
+        gxdfx.insertExpression(this.right.getClone());
+        gxdfx.insertExpression(this.left.getDerivative());
+        right.insertExpression(gxdfx);
+        ExpressionTree logfx = new UnaryOperator(ExpressionTree.tokenParser.get("log"));
+        logfx.insertExpression(this.left.getClone());
+        ExpressionTree fxlogfx = new BinaryOperator(ExpressionTree.tokenParser.get("*"));
+        fxlogfx.insertExpression(this.left.getClone());
+        fxlogfx.insertExpression(logfx);
+        ExpressionTree fxlogfxdgx = new BinaryOperator(ExpressionTree.tokenParser.get("*"));
+        fxlogfxdgx.insertExpression(fxlogfx);
+        fxlogfxdgx.insertExpression(this.right.getDerivative());
+        right.insertExpression(fxlogfxdgx);
+
+        middle.insertExpression(left);
+        middle.insertExpression(right);
+        return middle;
+    }
 }

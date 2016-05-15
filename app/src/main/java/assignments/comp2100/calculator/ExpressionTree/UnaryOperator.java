@@ -35,52 +35,6 @@ public class UnaryOperator extends ExpressionTree {
         this.precedence = op.precedence;
     }
 
-    //Derivatives
-    ExpressionTree dExp() {
-        UnaryOperator exp = new UnaryOperator(ExpressionTree.tokenParser.get("exp"));
-        exp.insertExpression(operand.getClone());
-        return exp;
-    }
-    ExpressionTree dLog() {
-        BinaryOperator inverse = new BinaryOperator(ExpressionTree.tokenParser.get("/"));
-        inverse.insertExpression(new Scalar(1));
-        inverse.insertExpression(operand.getClone());
-        return inverse;
-    }
-    ExpressionTree dSin() {
-        UnaryOperator cos = new UnaryOperator(ExpressionTree.tokenParser.get("cos"));
-        cos.insertExpression(operand.getClone());
-        return cos;
-    }
-    ExpressionTree dCos() {
-        BinaryOperator n_sin = new BinaryOperator(ExpressionTree.tokenParser.get("*"));
-        n_sin.insertExpression(new Scalar(-1));
-        UnaryOperator sin = new UnaryOperator(ExpressionTree.tokenParser.get("sin"));
-        sin.insertExpression(operand.getClone());
-        n_sin.insertExpression(sin);
-        return n_sin;
-    }
-    ExpressionTree dTan() {
-        BinaryOperator cos_2 = new BinaryOperator(ExpressionTree.tokenParser.get("*"));
-        UnaryOperator cos = new UnaryOperator(ExpressionTree.tokenParser.get("cos"));
-        cos.insertExpression(operand.getClone());
-        cos_2.insertExpression(cos);
-        cos_2.insertExpression(cos.getClone());
-        BinaryOperator sec_2 = new BinaryOperator(ExpressionTree.tokenParser.get("/"));
-        sec_2.insertExpression(new Scalar(1));
-        sec_2.insertExpression(cos_2);
-        return sec_2;
-    }
-    ExpressionTree dSqrt() {
-        BinaryOperator inverse = new BinaryOperator(ExpressionTree.tokenParser.get("/"));
-        inverse.insertExpression(new Scalar(0.5f));
-        inverse.insertExpression(getClone());
-        return inverse;
-    }
-    ExpressionTree dAbs() {
-        return operand.getDerivative();
-    }
-
     @Override
     ExpressionTree insertExpression(ExpressionTree expr) {
         if (operand == null) {
@@ -169,5 +123,51 @@ public class UnaryOperator extends ExpressionTree {
     @Override
     public String toString() {
         return OperationDatabase.reverseTokenizer.get(operation.getName()) + operand.toString();
+    }
+
+    //Derivatives
+    ExpressionTree dExp() {
+        UnaryOperator exp = new UnaryOperator(ExpressionTree.tokenParser.get("exp"));
+        exp.insertExpression(operand.getClone());
+        return exp;
+    }
+    ExpressionTree dLog() {
+        BinaryOperator inverse = new BinaryOperator(ExpressionTree.tokenParser.get("/"));
+        inverse.insertExpression(new Scalar(1));
+        inverse.insertExpression(operand.getClone());
+        return inverse;
+    }
+    ExpressionTree dSin() {
+        UnaryOperator cos = new UnaryOperator(ExpressionTree.tokenParser.get("cos"));
+        cos.insertExpression(operand.getClone());
+        return cos;
+    }
+    ExpressionTree dCos() {
+        BinaryOperator n_sin = new BinaryOperator(ExpressionTree.tokenParser.get("*"));
+        n_sin.insertExpression(new Scalar(-1));
+        UnaryOperator sin = new UnaryOperator(ExpressionTree.tokenParser.get("sin"));
+        sin.insertExpression(operand.getClone());
+        n_sin.insertExpression(sin);
+        return n_sin;
+    }
+    ExpressionTree dTan() {
+        BinaryOperator cos_2 = new BinaryOperator(ExpressionTree.tokenParser.get("*"));
+        UnaryOperator cos = new UnaryOperator(ExpressionTree.tokenParser.get("cos"));
+        cos.insertExpression(operand.getClone());
+        cos_2.insertExpression(cos);
+        cos_2.insertExpression(cos.getClone());
+        BinaryOperator sec_2 = new BinaryOperator(ExpressionTree.tokenParser.get("/"));
+        sec_2.insertExpression(new Scalar(1));
+        sec_2.insertExpression(cos_2);
+        return sec_2;
+    }
+    ExpressionTree dSqrt() {
+        BinaryOperator inverse = new BinaryOperator(ExpressionTree.tokenParser.get("/"));
+        inverse.insertExpression(new Scalar(0.5f));
+        inverse.insertExpression(getClone());
+        return inverse;
+    }
+    ExpressionTree dAbs() {
+        return operand.getDerivative();
     }
 }

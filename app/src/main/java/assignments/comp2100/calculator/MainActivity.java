@@ -45,6 +45,7 @@ public class MainActivity extends Activity {
     boolean graphFlag = false;
     boolean funcFlag = false;
     boolean evaluateFlag = false;
+    boolean resultShownFlag = false;
     int rstFlag = 0;
     ArrayList<String> numInputs = new ArrayList<>();
     String currentExpression;
@@ -114,6 +115,8 @@ public class MainActivity extends Activity {
      * @param v
      */
     public void append(View v) {
+        if (graphFlag) drawFunction(null);
+        resultShownFlag = false;
         int max_lines;
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
             max_lines = 4;
@@ -143,6 +146,7 @@ public class MainActivity extends Activity {
     }
 
     public void appendVar(View v) {
+        if (graphFlag) drawFunction(null);
         funcFlag = true;
         append(v);
     }
@@ -152,6 +156,7 @@ public class MainActivity extends Activity {
      * @param v
      */
     public void allClear(View v) {
+        if (graphFlag) drawFunction(null);
         tvDisplay.setText("");
         tvDisplay.scrollTo(0, 0);
         rstFlag = 0;
@@ -164,12 +169,15 @@ public class MainActivity extends Activity {
      * @param v
      */
     public void undo(View v) {
+        if (graphFlag) drawFunction(null);
+        if (resultShownFlag) return;
         if (!tvDisplay.getText().toString().equals("")) {
             String tmp = tvDisplay.getText().toString();
             if (rstFlag == 1){
                 tvDisplay.setText("");
             } else {
-               tvDisplay.setText(tmp.substring(0,tmp.length() - 1));
+                if (tmp.charAt(tmp.length() - 1) == '\n') return;
+                tvDisplay.setText(tmp.substring(0,tmp.length() - 1));
             }
         }
 
@@ -357,9 +365,6 @@ public class MainActivity extends Activity {
             case 3:
                 Toast.makeText(this, "Invalid character detected!", Toast.LENGTH_LONG).show();
                 break;
-            case 4:
-                Toast.makeText(this, "Invalid expression, unmatched brackets or operators", Toast.LENGTH_LONG).show();
-                break;
         }
     }
 
@@ -370,11 +375,12 @@ public class MainActivity extends Activity {
             alertError(error);
             return null;
         }
-        if (!ExpressionTree.checkInput(expr)) {
-            alertError(4);
+        String spacedExpr = (String)parseResult.get("str");
+        if (!ExpressionTree.checkInput(spacedExpr)) {
+            Toast.makeText(this, "Invalid expression, unmatched brackets or operators", Toast.LENGTH_LONG).show();
             return null;
         }
-        return ExpressionTree.parseStringToTree((String)parseResult.get("str"));
+        return ExpressionTree.parseStringToTree(spacedExpr);
     }
 
     /**
@@ -384,6 +390,13 @@ public class MainActivity extends Activity {
      * @param v
      */
     public void evaluate(View v) {
+        if (resultShownFlag) {
+            tvDisplay.setText(currentExpression);
+            resultShownFlag = false;
+            return;
+        }
+        if (graphFlag) drawFunction(null);
+
         String expression = tvDisplay.getText().toString();
         float x = 0;
 
@@ -399,6 +412,10 @@ public class MainActivity extends Activity {
 
         if ( error != 0 || expression.equals("")){
             alertError(error);
+            return;
+        }
+        if (!ExpressionTree.checkInput(expression)) {
+            Toast.makeText(this, "Invalid expression, unmatched brackets or operators", Toast.LENGTH_LONG).show();
             return;
         }
 
@@ -424,32 +441,15 @@ public class MainActivity extends Activity {
                 //tvDisplay.setText(expression);
                 currentExpression = expression;
                 evaluateFlag = false;
+                resultShownFlag = true;
             }
         } else {
             expression = currentExpression;
         }
 
-        if (ExpressionTree.checkInput(expression)) {
-            tvDisplay.scrollTo(0,0);
-            try {
-                tvDisplay.setText(String.valueOf(ExpressionTree.parseStringToTree((String) parseAndAddSpace(expression).get("str")).evaluate(x)));
-                rstFlag = 1;
-            } catch (NumberFormatException e) {
-
-            }
-        } else {
-            new CountDownTimer(3000, 500) {
-                @Override
-                public void onTick(long millisUntilFinished) {
-                    tvDisplay.setText("Invalid Expression! \n Disappear in " + millisUntilFinished / 1000 + "s.");
-                }
-
-                @Override
-                public void onFinish() {
-                    allClear(tvDisplay);
-                }
-            }.start();
-        }
+        tvDisplay.scrollTo(0,0);
+        tvDisplay.setText(String.valueOf(ExpressionTree.parseStringToTree((String) parseAndAddSpace(expression).get("str")).evaluate(x)));
+        rstFlag = 1;
     }
 
     /**
@@ -457,9 +457,9 @@ public class MainActivity extends Activity {
      * Transforms the current ExpressionTree into one representing its derivative
      */
     public void differentiate(View v) {
-        if (funcFlag) {
-            return;
-        }
+        if (evaluateFlag) return;
+        if (graphFlag) drawFunction(null);
+
         ExpressionTree function = parseExpression(tvDisplay.getText().toString());
         if (function != null) {
             tvDisplay.setText(function.getDerivative().getSimplified().toString());
@@ -467,42 +467,51 @@ public class MainActivity extends Activity {
     }
 
     private static final int WINDOW_SCALE_HORIZONTAL = 6;
-    private static final int WINDOW_SCALE_VERTICAL = 5;
+    private static final int AXIS_COLOUR = 0xEEEEEE;
+    private static final int GRAPH_COLOUR = 0xEE00;
+    private static final int LABEL_FONT_SIZE = 20;
+    private static final int NOTCH_LENGTH = 5;
 
     /**
      * Written by Nathan F. Elazar
-     * Plots a graph of the current ExpressionTree over the display
+     * Switches the view to show/hide the graphical display, and
+     * plots a graph of the current ExpressionTree over the display.
      */
     public void drawFunction(View v) {
+        if (evaluateFlag) return;
         ExpressionTree function = parseExpression(tvDisplay.getText().toString());
         if (function == null) return;
 
         graphFlag = !graphFlag;
-
         ((ImageView)findViewById(R.id.graphic_display)).setImageResource(0);
         if (graphFlag) {
             Bitmap bm = Bitmap.createBitmap(tvDisplay.getWidth(), tvDisplay.getHeight(), Bitmap.Config.RGB_565);
             //Draw x and y axis
             for (int i=0; i<tvDisplay.getWidth(); i++) {
-                bm.setPixel(i, (int)(tvDisplay.getHeight() / 2.0), 0xEEEEEE);
+                bm.setPixel(i, (int)(tvDisplay.getHeight() / 2.0), AXIS_COLOUR);
             }
             for (int i=0; i<tvDisplay.getHeight(); i++) {
-                bm.setPixel((int)(tvDisplay.getWidth() / 2.0), i, 0xEEEEEE);
+                bm.setPixel((int)(tvDisplay.getWidth() / 2.0), i, AXIS_COLOUR);
             }
 
-            float maxFunctionAbs = 1;
+            float maxFunctionAbs = 1; //Absolute value of the largest value, used to automatically scale the vertical axis
             float[] functionHeights = new float[tvDisplay.getWidth()];
+
+            //For each pixel in the display, evaluate the function at that point and record the function height
             for (int i = 0; i < tvDisplay.getWidth(); i++) {
                 functionHeights[i] = function.evaluate((float) ((i - (tvDisplay.getWidth() / 2.0)) * WINDOW_SCALE_HORIZONTAL / tvDisplay.getWidth()));
                 if (functionHeights[i] == Float.POSITIVE_INFINITY || functionHeights[i] == Float.NEGATIVE_INFINITY || Float.isNaN(functionHeights[i])) continue;
                 maxFunctionAbs = Math.abs(functionHeights[i]) > maxFunctionAbs ? Math.abs(functionHeights[i]) : maxFunctionAbs;
             }
-            maxFunctionAbs = maxFunctionAbs > tvDisplay.getHeight() * 0.5f ? tvDisplay.getHeight() * 0.5f : maxFunctionAbs;
+
+            maxFunctionAbs = maxFunctionAbs > tvDisplay.getHeight() * 0.5f ? tvDisplay.getHeight() * 0.5f : maxFunctionAbs; //Cap the max value, otherwise plots will be really squished
             int previousPixelHeight = 0;
             boolean previousExists = false;
+
+            //Go through and plot each function height on the bitmap
             for (int i=0; i<tvDisplay.getWidth(); i++) {
                 if (functionHeights[i] != Float.POSITIVE_INFINITY && functionHeights[i] != Float.NEGATIVE_INFINITY && !Float.isNaN(functionHeights[i])) {
-                    int pixelHeight = (int) (0.5 * tvDisplay.getHeight() * (1 - functionHeights[i] / (maxFunctionAbs + 1)));
+                    int pixelHeight = (int) (0.5 * tvDisplay.getHeight() * (1 - functionHeights[i] / (maxFunctionAbs * 1.01)));
                     if (!previousExists) {
                         previousPixelHeight = pixelHeight;
                         previousExists = true;
@@ -510,10 +519,10 @@ public class MainActivity extends Activity {
                     if (pixelHeight >= 0 && pixelHeight < tvDisplay.getHeight()) {
                         if (previousPixelHeight >= 0 && previousPixelHeight < tvDisplay.getHeight()) {
                             for (int j = Math.min(pixelHeight, previousPixelHeight); j <= Math.max(pixelHeight, previousPixelHeight); j++) {
-                                bm.setPixel(i, j, 0xEE00);
+                                bm.setPixel(i, j, GRAPH_COLOUR);
                             }
                         } else {
-                            bm.setPixel(i, pixelHeight, 0xEE00);
+                            bm.setPixel(i, pixelHeight, GRAPH_COLOUR);
                         }
                     }
                     previousPixelHeight = pixelHeight;
@@ -522,14 +531,23 @@ public class MainActivity extends Activity {
                 }
             }
 
+            //Paint the axis labels
             Canvas canvas = new Canvas(bm);
             Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-            paint.setColor(Color.rgb(220, 220, 240));
-            paint.setTextSize(14);
-            paint.setShadowLayer(1f, 0f, 1f, Color.WHITE);
+            paint.setColor(Color.WHITE);
+            paint.setTextSize(LABEL_FONT_SIZE);
+            paint.setShadowLayer(1, 0, 1, Color.WHITE);
 
-            canvas.drawText(String.valueOf(WINDOW_SCALE_HORIZONTAL / 2), tvDisplay.getWidth() - 15, (int) (tvDisplay.getHeight() / 2.0) - 10, paint);
-            canvas.drawText(String.valueOf(maxFunctionAbs), (int)(tvDisplay.getWidth() / 2.0) + 5, 10, paint);
+            for (int i=-NOTCH_LENGTH; i<NOTCH_LENGTH; i++) {
+                bm.setPixel((int)(tvDisplay.getWidth() / 2.0) + i, (int) (0.5 * tvDisplay.getHeight() * (1 - maxFunctionAbs / (maxFunctionAbs * 1.01))), AXIS_COLOUR);
+                bm.setPixel(tvDisplay.getWidth() - LABEL_FONT_SIZE, (int)(tvDisplay.getHeight() / 2.0) - i, AXIS_COLOUR);
+                bm.setPixel(LABEL_FONT_SIZE, (int)(tvDisplay.getHeight() / 2.0) - i, AXIS_COLOUR);
+                bm.setPixel((int)(tvDisplay.getWidth() / 2.0) + i, (int) (-0.5 * tvDisplay.getHeight() * (1 - maxFunctionAbs / (maxFunctionAbs * 1.01)) + tvDisplay.getHeight() - 1), AXIS_COLOUR);
+            }
+            canvas.drawText(String.valueOf(WINDOW_SCALE_HORIZONTAL / 2), tvDisplay.getWidth() - LABEL_FONT_SIZE, (int) ((tvDisplay.getHeight() / 2.0) - NOTCH_LENGTH), paint);
+            canvas.drawText(String.valueOf(-WINDOW_SCALE_HORIZONTAL / 2), LABEL_FONT_SIZE, (int) ((tvDisplay.getHeight() / 2.0) - NOTCH_LENGTH), paint);
+            canvas.drawText(String.valueOf(maxFunctionAbs), (int)(tvDisplay.getWidth() / 2.0) + NOTCH_LENGTH, (int) (0.5 * tvDisplay.getHeight() * (1 - maxFunctionAbs / (maxFunctionAbs * 1.01))) + LABEL_FONT_SIZE, paint);
+            canvas.drawText(String.valueOf(-maxFunctionAbs), (int)(tvDisplay.getWidth() / 2.0) + NOTCH_LENGTH, (int) (-0.5 * tvDisplay.getHeight() * (1 - maxFunctionAbs / (maxFunctionAbs * 1.01))) - LABEL_FONT_SIZE + tvDisplay.getHeight() - 1, paint);
 
             tvDisplay.setVisibility(View.GONE);
             findViewById(R.id.graphic_display).setVisibility(View.VISIBLE);

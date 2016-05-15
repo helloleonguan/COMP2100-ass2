@@ -2,6 +2,8 @@ package assignments.comp2100.calculator.ExpressionTree;
 
 /**
  * Created by Nathan F. Elazar on 29/04/2016.
+ *
+ * This class represents the 'x' variable used in functions
  */
 public class Variable extends Scalar {
     @Override
@@ -11,7 +13,7 @@ public class Variable extends Scalar {
     public ExpressionTree getClone() { return new Variable(); }
 
     @Override
-    public boolean isFunction() {return true; }
+    public boolean isFunction() { return true; }
 
     @Override
     public float evaluate(float x) {
