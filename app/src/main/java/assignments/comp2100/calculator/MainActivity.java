@@ -26,9 +26,9 @@ import java.util.Set;
 
 import assignments.comp2100.calculator.ExpressionTree.ExpressionTree;
 
-//        Author: Liyang(Leon) Guan
-//        Uni ID: u5684206
-//        Declaration: The following code is written all by myself.
+//        Author: Liyang(Leon) Guan & Nathan F. Ealzar
+//        Declaration: The following code is written mainly by Liyang Guan.
+//                     The methods written by Nathan F. Ealzar are identified in the comment above methods.
 
 public class MainActivity extends Activity {
 
@@ -375,7 +375,7 @@ public class MainActivity extends Activity {
             alertError(error);
             return null;
         }
-        String spacedExpr = (String)parseResult.get("str");
+        String spacedExpr = (String) parseResult.get("str");
         if (!ExpressionTree.checkInput(spacedExpr)) {
             Toast.makeText(this, "Invalid expression, unmatched brackets or operators", Toast.LENGTH_LONG).show();
             return null;

@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 
+<!--Author: Liyang(Leon) Guan-->
+<!--Declaration: The following code is written mainly by Liyang Guan.-->
+
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:state_pressed="true"
         android:drawable="@drawable/input_button_clicked_bg"/>

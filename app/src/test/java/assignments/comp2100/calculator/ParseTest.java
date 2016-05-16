@@ -6,9 +6,8 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import static org.junit.Assert.assertTrue;
 
-/**
- * Created by Administrator on 2016/5/14/0014.
- */
+//        Author: Liyang(Leon) Guan
+//        Declaration: The following code is written mainly by Liyang Guan.
 
 public class ParseTest {
     @Test

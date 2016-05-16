@@ -6,6 +6,9 @@ import assignments.comp2100.calculator.ExpressionTree.ExpressionTree;
 
 import static org.junit.Assert.*;
 
+//        Author: Nathan F. Ealzar
+//        Declaration: The following code is written by Nathan F. Ealzar.
+
 public class ExpressionTreeTest {
     private static final float DELTA = 0.0001f;
 
