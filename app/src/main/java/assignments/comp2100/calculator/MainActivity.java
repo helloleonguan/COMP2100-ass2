@@ -259,12 +259,19 @@ public class MainActivity extends Activity {
         numInputs.add("8");
         numInputs.add("9");
         numInputs.add(".");
-        numInputs.add("x");
 
         for (index = 0; index < s.length();){
             if (s.charAt(index) == 'x') {
+                if (index > 0 && ((numInputs.contains(Character.toString(s.charAt(index-1))) && s.charAt(index-1) != '.') || s.charAt(index-1) == 'x')) {
+                    rst += " * ";
+                }
                 rst += "x";
                 index ++;
+                if (index < s.length() && (numInputs.contains(Character.toString(s.charAt(index))) || s.charAt(index) == 'x')) {
+                    errorType = 3;
+                    rst = null;
+                    break;
+                }
             } else if (Character.isLetter(s.charAt(index))){
                 int flag = 0;
                 for (String function : rightSpaceInputs) {
