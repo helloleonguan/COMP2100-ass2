@@ -317,6 +317,10 @@ public class MainActivity extends Activity {
                     errorType = 2;
                     rst = null;
                     break;
+                } else if (s.charAt(index + length - 1) == '.') {
+                    errorType = 3;
+                    rst = null;
+                    break;
                 } else {
                     rst += s.substring(index,index+length);
                     index += length;
