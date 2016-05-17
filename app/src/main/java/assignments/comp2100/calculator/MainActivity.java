@@ -262,8 +262,14 @@ public class MainActivity extends Activity {
 
         for (index = 0; index < s.length();){
             if (s.charAt(index) == 'x') {
-                if (index > 0 && ((numInputs.contains(Character.toString(s.charAt(index-1))) && s.charAt(index-1) != '.') || s.charAt(index-1) == 'x')) {
-                    rst += " * ";
+                if (index > 0 && (numInputs.contains(Character.toString(s.charAt(index-1))) || s.charAt(index-1) == 'x')) {
+                    if (s.charAt(index-1) != '.') {
+                        rst += " * ";
+                    } else {
+                        errorType = 3;
+                        rst = null;
+                        break;
+                    }
                 }
                 rst += "x";
                 index ++;
